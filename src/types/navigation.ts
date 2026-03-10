@@ -1,3 +1,5 @@
+import { CardInputDto, DrawSource, LayoutType } from './dto'
+
 // Описываем все экраны и параметры, которые они принимают
 export type RootStackParamList = {
     Splash: undefined // <-- Добавили Splash
@@ -7,14 +9,15 @@ export type RootStackParamList = {
     SetupReading: undefined
 
     // На стол мы передаем тип расклада (daily, chronological и т.д.)
-    VirtualTable: { layoutType: string }
-    PhysicalInput: { layoutType: string }
+    VirtualTable: { layoutType: LayoutType; question?: string }
+    PhysicalInput: { layoutType: LayoutType }
 
     // На экран результата мы передаем готовые карты, чтобы ИИ их расшифровал
     // Временно используем any, пока не перенесем интерфейс CardInputDto на фронт
     Result: {
-        cards: any[]
-        layoutType: string
-        drawSource: 'app' | 'physical'
+        cards: CardInputDto[]
+        layoutType: LayoutType
+        drawSource: DrawSource
+        question?: string // <-- И сюда
     }
 }

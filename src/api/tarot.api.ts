@@ -20,9 +20,15 @@ export const TarotApi = {
         return response.data // { cards, aiResponse }
     },
 
-    // 4. Получение истории
-    getHistory: async () => {
-        const response = await apiClient.get('/history')
-        return response.data // HistoryReadingItem[]
+    // 4. Получение истории (с пагинацией)
+    getHistory: async (page: number = 1, limit: number = 10) => {
+        const response = await apiClient.get(`/history?page=${page}&limit=${limit}`)
+        return response.data // Ожидаем массив HistoryReadingItem[]
+    },
+
+    // 5. Удаление записи из истории
+    deleteHistoryItem: async (id: string) => {
+        const response = await apiClient.delete(`/history/${id}`)
+        return response.data
     },
 }

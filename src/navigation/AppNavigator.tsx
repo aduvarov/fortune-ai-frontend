@@ -5,37 +5,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/navigation'
 import { SplashScreen } from '../screens/SplashScreen'
 import { HomeScreen } from '../screens/HomeScreen'
+import { SetupReadingScreen } from '../screens/SetupReadingScreen'
+import { PhysicalInputScreen } from '../screens/PhysicalInputScreen'
+import { ResultScreen } from '../screens/ResultScreen'
+import { VirtualTableScreen } from '../screens/VirtualTableScreen'
+import { HistoryScreen } from '../screens/HistoryScreen'
 
-// ВРЕМЕННЫЕ ЗАГЛУШКИ ЭКРАНОВ (потом перенесем в src/screens/)
-
-const HistoryScreen = () => (
-    <View style={styles.screen}>
-        <Text style={styles.text}>📜 История Раскладов</Text>
-    </View>
-)
 const SettingsScreen = () => (
     <View style={styles.screen}>
         <Text style={styles.text}>⚙️ Настройки и Лимиты</Text>
-    </View>
-)
-const SetupReadingScreen = () => (
-    <View style={styles.screen}>
-        <Text style={styles.text}>✨ Настройка Расклада</Text>
-    </View>
-)
-const VirtualTableScreen = () => (
-    <View style={styles.screen}>
-        <Text style={styles.text}>🃏 Виртуальный Стол</Text>
-    </View>
-)
-const PhysicalInputScreen = () => (
-    <View style={styles.screen}>
-        <Text style={styles.text}>🖐 Ввод физических карт</Text>
-    </View>
-)
-const ResultScreen = () => (
-    <View style={styles.screen}>
-        <Text style={styles.text}>👁 Ответ Вселенной (ИИ)</Text>
     </View>
 )
 
