@@ -8,6 +8,7 @@ import {
     TextInput,
     KeyboardAvoidingView,
     Platform,
+    Modal,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
@@ -18,41 +19,71 @@ import { LayoutType, DrawSource } from '../types/dto'
 
 type SetupScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SetupReading'>
 
-const LAYOUT_OPTIONS: { id: LayoutType; title: string; desc: string; icon: any }[] = [
+const LAYOUT_OPTIONS: { id: LayoutType; title: string; desc: string; icon: any; fullDesc?: string }[] = [
     {
         id: 'daily',
         title: 'Карта Дня',
         desc: 'На сегодня',
         icon: 'sunny-outline',
+        fullDesc: 'Одна карта, которая покажет главную энергию грядущего дня, даст совет или предупредит о возможном вызове.',
     },
     {
         id: 'chronological',
         title: 'Прошлое, Настоящее, Будущее',
-        desc: 'На ситуацию',
+        desc: 'Классический расклад на ситуацию',
         icon: 'hourglass-outline',
+        fullDesc: 'Классический расклад из трех карт. Помогает проанализировать развитие ситуации во времени и увидеть возможный исход.',
     },
     {
         id: 'partner',
         title: 'Отношения',
-        desc: 'Ты и партнер',
+        desc: 'Ты, партнер и то, что между вами',
         icon: 'heart-half-outline',
+        fullDesc: 'Расклад из трех карт для анализа отношений. Показывает ваши чувства, чувства партнера и перспективу союза.',
     },
     {
         id: 'reflective',
-        title: 'Конфликт',
-        desc: 'Анализ',
+        title: 'Внутренний Конфликт',
+        desc: 'Глубокий анализ подсознания (4 карты)',
         icon: 'eye-outline',
+        fullDesc: 'Глубокий анализ из 4 карт. Помогает разобраться в сложных внутренних противоречиях, скрытых мотивах и страхах.',
+    },
+]
+
+const SOURCE_OPTIONS: { id: DrawSource; title: string; icon: any; fullDesc: string }[] = [
+    {
+        id: 'app',
+        title: 'Виртуальная',
+        icon: 'phone-portrait-outline',
+        fullDesc: 'Виртуальная колода. Карты будут перемешаны и вытянуты случайным образом прямо на экране вашего устройства.',
+    },
+    {
+        id: 'physical',
+        title: 'Физическая',
+        icon: 'hand-right-outline',
+        fullDesc: 'Если у вас есть настоящая колода Таро, вы можете самостоятельно вытянуть карты, а затем выбрать их здесь для интерпретации ИИ.',
     },
 ]
 
 export const SetupReadingScreen = () => {
     const navigation = useNavigation<SetupScreenNavigationProp>()
 
-    const [selectedLayout, setSelectedLayout] = useState<LayoutType>('daily')
-    const [selectedSource, setSelectedSource] = useState<DrawSource>('app')
+    const [selectedLayout, setSelectedLayout] = useState<LayoutType | null>(null)
+    const [selectedSource, setSelectedSource] = useState<DrawSource | null>(null)
     const [question, setQuestion] = useState('')
 
+    // Модалка для Раскладов
+    const [layoutModalVisible, setLayoutModalVisible] = useState(false)
+    const [previewLayoutId, setPreviewLayoutId] = useState<LayoutType | null>(null)
+    const [tempQuestion, setTempQuestion] = useState('') // Временный вопрос для модалки
+
+    // Модалка для Колоды
+    const [sourceModalVisible, setSourceModalVisible] = useState(false)
+    const [previewSourceId, setPreviewSourceId] = useState<DrawSource | null>(null)
+
     const handleContinue = () => {
+        if (!selectedLayout || !selectedSource) return
+
         const finalQuestion = selectedLayout === 'daily' ? undefined : question.trim()
 
         if (selectedSource === 'app') {
@@ -68,135 +99,226 @@ export const SetupReadingScreen = () => {
         }
     }
 
+    const openLayoutModal = (id: LayoutType) => {
+        setPreviewLayoutId(id)
+        setTempQuestion(question) // Подтягиваем уже введенный вопрос
+        setLayoutModalVisible(true)
+    }
+
+    const confirmLayout = () => {
+        if (previewLayoutId) {
+            setSelectedLayout(previewLayoutId)
+            setQuestion(tempQuestion)
+        }
+        setLayoutModalVisible(false)
+    }
+
+    const openSourceModal = (id: DrawSource) => {
+        setPreviewSourceId(id)
+        setSourceModalVisible(true)
+    }
+
+    const confirmSource = () => {
+        if (previewSourceId) {
+            setSelectedSource(previewSourceId)
+        }
+        setSourceModalVisible(false)
+    }
+
+    const previewLayoutData = LAYOUT_OPTIONS.find(l => l.id === previewLayoutId)
+    const previewSourceData = SOURCE_OPTIONS.find(s => s.id === previewSourceId)
+
+    const isContinueEnabled = selectedLayout !== null && selectedSource !== null
+
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                        <Ionicons name="arrow-back" size={24} color="#D4AF37" />
-                        <Text style={styles.backText}>Назад</Text>
-                    </TouchableOpacity>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+                    <Text style={styles.backText}>Назад</Text>
+                </TouchableOpacity>
+            </View>
+
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}>
+                
+                {/* --- ВЫБОР РАСКЛАДА --- */}
+                <Text style={styles.sectionTitle}>Выбери Расклад</Text>
+                <View style={styles.optionsGrid}>
+                    {LAYOUT_OPTIONS.map(option => {
+                        const isSelected = selectedLayout === option.id
+                        return (
+                            <TouchableOpacity
+                                key={option.id}
+                                style={[
+                                    styles.optionCard,
+                                    isSelected && styles.optionCardActive
+                                ]}
+                                onPress={() => openLayoutModal(option.id)}
+                                activeOpacity={0.7}>
+                                <View style={[styles.iconContainer, isSelected && styles.iconContainerSelected]}>
+                                    <Ionicons
+                                        name={option.icon}
+                                        size={28}
+                                        color={isSelected ? '#0A0A1A' : '#D4AF37'}
+                                    />
+                                </View>
+                                <Text
+                                    style={[
+                                        styles.optionTitle,
+                                        isSelected && styles.textSelected,
+                                    ]}
+                                    numberOfLines={2}>
+                                    {option.title}
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.optionDesc,
+                                        isSelected && styles.textSelected,
+                                    ]}
+                                    numberOfLines={2}>
+                                    {option.desc}
+                                </Text>
+                            </TouchableOpacity>
+                        )
+                    })}
                 </View>
 
-                <ScrollView
-                    contentContainerStyle={styles.scrollContent}
-                    showsVerticalScrollIndicator={false}>
-                    <Text style={styles.sectionTitle}>Выбери Расклад</Text>
-                    <View style={styles.optionsGrid}>
-                        {LAYOUT_OPTIONS.map(option => {
-                            const isSelected = selectedLayout === option.id
-                            return (
-                                <TouchableOpacity
-                                    key={option.id}
+                {/* Если выбран не Карта дня, показываем превью вопроса на главном угле */}
+                {selectedLayout && selectedLayout !== 'daily' && (
+                    <View style={styles.activeQuestionCard}>
+                        <Text style={styles.activeQuestionLabel}>Ваш вопрос:</Text>
+                        <Text style={styles.activeQuestionText}>
+                            {question || "Не задан (Будет общий расклад)"}
+                        </Text>
+                    </View>
+                )}
+
+                {/* --- ВЫБОР КОЛОДЫ --- */}
+                <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Колода</Text>
+                <View style={styles.sourceGrid}>
+                    {SOURCE_OPTIONS.map((option) => {
+                        const isSelected = selectedSource === option.id;
+                        return (
+                            <TouchableOpacity
+                                key={option.id}
+                                style={[
+                                    styles.sourceCard,
+                                    isSelected && styles.optionCardActive,
+                                ]}
+                                onPress={() => openSourceModal(option.id)}
+                                activeOpacity={0.7}>
+                                <Ionicons
+                                    name={option.icon}
+                                    size={24}
+                                    color={isSelected ? '#0A0A1A' : '#D4AF37'}
+                                    style={styles.sourceIcon}
+                                />
+                                <Text
                                     style={[
-                                        styles.optionCard,
-                                        isSelected && styles.optionCardSelected,
-                                    ]}
-                                    onPress={() => setSelectedLayout(option.id)}
-                                    activeOpacity={0.7}>
-                                    <View style={[styles.iconContainer, isSelected && styles.iconContainerSelected]}>
-                                        <Ionicons
-                                            name={option.icon}
-                                            size={28}
-                                            color={isSelected ? '#0A0A1A' : '#D4AF37'}
+                                        styles.sourceTitle,
+                                        isSelected && styles.textSelected,
+                                    ]}>
+                                    {option.title}
+                                </Text>
+                            </TouchableOpacity>
+                        )
+                    })}
+                </View>
+            </ScrollView>
+
+            <View style={styles.footer}>
+                <TouchableOpacity 
+                    style={[styles.continueButton, !isContinueEnabled && styles.continueButtonDisabled]} 
+                    onPress={handleContinue}
+                    disabled={!isContinueEnabled}>
+                    <Text style={[styles.continueButtonText, !isContinueEnabled && styles.continueButtonTextDisabled]}>
+                        Продолжить
+                    </Text>
+                    <Ionicons name="arrow-forward" size={20} color={isContinueEnabled ? "#0A0A1A" : "rgba(255,255,255,0.3)"} />
+                </TouchableOpacity>
+            </View>
+
+            {/* --- МОДАЛКА ВЫБРА РАСКЛАДА --- */}
+            <Modal
+                transparent={true}
+                visible={layoutModalVisible}
+                animationType="fade"
+                onRequestClose={() => setLayoutModalVisible(false)}
+            >
+                <KeyboardAvoidingView 
+                    style={styles.modalOverlay}
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                    <View style={styles.modalContent}>
+                        {previewLayoutData && (
+                            <>
+                                <View style={styles.modalIconContainer}>
+                                    <Ionicons name={previewLayoutData.icon} size={40} color="#D4AF37" />
+                                </View>
+                                <Text style={styles.modalTitle}>{previewLayoutData.title}</Text>
+                                <Text style={styles.modalDesc}>{previewLayoutData.fullDesc}</Text>
+
+                                {previewLayoutId !== 'daily' && (
+                                    <View style={styles.modalInputSection}>
+                                        <Text style={styles.modalInputLabel}>Ваш вопрос Вселенной (необязательно)</Text>
+                                        <TextInput
+                                            style={styles.modalTextInput}
+                                            placeholder="Например: Как пройдет встреча завтра?"
+                                            placeholderTextColor="#8A8A9E"
+                                            value={tempQuestion}
+                                            onChangeText={setTempQuestion}
+                                            multiline
+                                            maxLength={150}
+                                            textAlignVertical="top"
                                         />
                                     </View>
-                                    <Text
-                                        style={[
-                                            styles.optionTitle,
-                                            isSelected && styles.textSelected,
-                                        ]}
-                                        numberOfLines={2}>
-                                        {option.title}
-                                    </Text>
-                                    <Text
-                                        style={[
-                                            styles.optionDesc,
-                                            isSelected && styles.textSelected,
-                                        ]}
-                                        numberOfLines={1}>
-                                        {option.desc}
-                                    </Text>
-                                </TouchableOpacity>
-                            )
-                        })}
+                                )}
+
+                                <View style={styles.modalActions}>
+                                    <TouchableOpacity style={styles.modalCancelBtn} onPress={() => setLayoutModalVisible(false)}>
+                                        <Text style={styles.modalCancelText}>Отмена</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.modalApproveBtn} onPress={confirmLayout}>
+                                        <Text style={styles.modalApproveText}>Выбрать</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        )}
                     </View>
+                </KeyboardAvoidingView>
+            </Modal>
 
-                    {selectedLayout !== 'daily' && (
-                        <View style={styles.questionSection}>
-                            <Text style={styles.sectionTitle}>Твой Вопрос</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                placeholder="Например: Как пройдет встреча завтра?"
-                                placeholderTextColor="#8A8A9E"
-                                value={question}
-                                onChangeText={setQuestion}
-                                multiline
-                                maxLength={150}
-                                textAlignVertical="top"
-                            />
-                        </View>
-                    )}
+            {/* --- МОДАЛКА ВЫБОРА КОЛОДЫ --- */}
+            <Modal
+                transparent={true}
+                visible={sourceModalVisible}
+                animationType="fade"
+                onRequestClose={() => setSourceModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        {previewSourceData && (
+                            <>
+                                <View style={styles.modalIconContainer}>
+                                    <Ionicons name={previewSourceData.icon} size={40} color="#D4AF37" />
+                                </View>
+                                <Text style={styles.modalTitle}>{previewSourceData.title}</Text>
+                                <Text style={styles.modalDesc}>{previewSourceData.fullDesc}</Text>
 
-                    <Text style={[styles.sectionTitle, { marginTop: selectedLayout !== 'daily' ? 16 : 24 }]}>
-                        Колода
-                    </Text>
-                    <View style={styles.sourceGrid}>
-                        <TouchableOpacity
-                            style={[
-                                styles.sourceCard,
-                                selectedSource === 'app' && styles.optionCardSelected,
-                            ]}
-                            onPress={() => setSelectedSource('app')}
-                            activeOpacity={0.7}>
-                            <Ionicons
-                                name="phone-portrait-outline"
-                                size={24}
-                                color={selectedSource === 'app' ? '#0A0A1A' : '#D4AF37'}
-                                style={styles.sourceIcon}
-                            />
-                            <Text
-                                style={[
-                                    styles.sourceTitle,
-                                    selectedSource === 'app' && styles.textSelected,
-                                ]}>
-                                Виртуальная
-                            </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={[
-                                styles.sourceCard,
-                                selectedSource === 'physical' && styles.optionCardSelected,
-                            ]}
-                            onPress={() => setSelectedSource('physical')}
-                            activeOpacity={0.7}>
-                            <Ionicons
-                                name="hand-right-outline"
-                                size={24}
-                                color={selectedSource === 'physical' ? '#0A0A1A' : '#D4AF37'}
-                                style={styles.sourceIcon}
-                            />
-                            <Text
-                                style={[
-                                    styles.sourceTitle,
-                                    selectedSource === 'physical' && styles.textSelected,
-                                ]}>
-                                Физическая
-                            </Text>
-                        </TouchableOpacity>
+                                <View style={styles.modalActions}>
+                                    <TouchableOpacity style={styles.modalCancelBtn} onPress={() => setSourceModalVisible(false)}>
+                                        <Text style={styles.modalCancelText}>Отмена</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.modalApproveBtn} onPress={confirmSource}>
+                                        <Text style={styles.modalApproveText}>Выбрать</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        )}
                     </View>
-                </ScrollView>
-
-                <View style={styles.footer}>
-                    <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-                        <Text style={styles.continueButtonText}>Продолжить</Text>
-                        <Ionicons name="arrow-forward" size={20} color="#0A0A1A" />
-                    </TouchableOpacity>
                 </View>
-            </KeyboardAvoidingView>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -217,7 +339,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.5,
     },
     
-    // Сетка для раскладов
+    // Сетка
     optionsGrid: { 
         flexDirection: 'row', 
         flexWrap: 'wrap', 
@@ -225,7 +347,7 @@ const styles = StyleSheet.create({
         gap: 12 
     },
     optionCard: {
-        width: '48%', // Половина ширины минус отступ
+        width: '48%',
         alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.05)',
         borderWidth: 1,
@@ -233,7 +355,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 16,
     },
-    optionCardSelected: { backgroundColor: '#D4AF37', borderColor: '#D4AF37' },
+    optionCardActive: { backgroundColor: '#D4AF37', borderColor: '#D4AF37' },
     iconContainer: {
         width: 48,
         height: 48,
@@ -246,24 +368,21 @@ const styles = StyleSheet.create({
     iconContainerSelected: {
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
     },
-    optionTitle: { color: '#D4AF37', fontSize: 15, fontWeight: 'bold', marginBottom: 4, textAlign: 'center' },
-    optionDesc: { color: '#8A8A9E', fontSize: 12, textAlign: 'center' },
+    optionTitle: { color: '#D4AF37', fontSize: 15, fontWeight: 'bold', marginBottom: 6, textAlign: 'center' },
+    optionDesc: { color: '#8A8A9E', fontSize: 12, textAlign: 'center', lineHeight: 16 },
     textSelected: { color: '#0A0A1A' },
 
-    // Поле ввода вопроса
-    questionSection: { marginTop: 12 },
-    textInput: {
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        color: '#FFF',
-        borderWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.3)',
+    activeQuestionCard: {
+        marginTop: 16,
+        padding: 12,
+        backgroundColor: 'rgba(212, 175, 55, 0.05)',
         borderRadius: 12,
-        padding: 14,
-        fontSize: 15,
-        height: 80, // Сделано поменьше по высоте
+        borderWidth: 1,
+        borderColor: 'rgba(212, 175, 55, 0.2)',
     },
+    activeQuestionLabel: { color: '#D4AF37', fontSize: 13, marginBottom: 4 },
+    activeQuestionText: { color: '#FFF', fontSize: 15, fontStyle: 'italic' },
 
-    // Сетка для выбора колоды
     sourceGrid: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -279,6 +398,7 @@ const styles = StyleSheet.create({
         borderColor: 'rgba(212, 175, 55, 0.3)',
         borderRadius: 16,
         padding: 14,
+        paddingVertical: 18,
     },
     sourceIcon: { marginRight: 8 },
     sourceTitle: { color: '#D4AF37', fontSize: 14, fontWeight: 'bold' },
@@ -297,6 +417,9 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderRadius: 30,
     },
+    continueButtonDisabled: {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
     continueButtonText: {
         color: '#0A0A1A',
         fontSize: 16,
@@ -305,4 +428,77 @@ const styles = StyleSheet.create({
         letterSpacing: 1,
         marginRight: 8,
     },
+    continueButtonTextDisabled: {
+        color: 'rgba(255, 255, 255, 0.3)',
+    },
+
+    // Модалка
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    modalContent: {
+        width: '100%',
+        backgroundColor: '#111122',
+        borderRadius: 24,
+        padding: 24,
+        borderWidth: 1,
+        borderColor: 'rgba(212, 175, 55, 0.5)',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.5,
+        shadowRadius: 15,
+        elevation: 10,
+    },
+    modalIconContainer: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    modalTitle: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
+    modalDesc: { color: '#E0E0E0', fontSize: 16, textAlign: 'center', lineHeight: 24, marginBottom: 20 },
+    
+    modalInputSection: { width: '100%', marginBottom: 20 },
+    modalInputLabel: { color: '#8A8A9E', fontSize: 13, marginBottom: 8, marginLeft: 4 },
+    modalTextInput: {
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        color: '#FFF',
+        borderWidth: 1,
+        borderColor: 'rgba(212, 175, 55, 0.3)',
+        borderRadius: 16,
+        padding: 16,
+        fontSize: 16,
+        minHeight: 100,
+    },
+
+    modalActions: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between',
+        gap: 12,
+    },
+    modalCancelBtn: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: 16,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        alignItems: 'center',
+    },
+    modalCancelText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
+    modalApproveBtn: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: 16,
+        backgroundColor: '#D4AF37',
+        alignItems: 'center',
+    },
+    modalApproveText: { color: '#0A0A1A', fontSize: 16, fontWeight: 'bold' },
 })

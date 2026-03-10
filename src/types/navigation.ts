@@ -10,7 +10,7 @@ export type RootStackParamList = {
 
     // На стол мы передаем тип расклада (daily, chronological и т.д.)
     VirtualTable: { layoutType: LayoutType; question?: string }
-    PhysicalInput: { layoutType: LayoutType }
+    PhysicalInput: { layoutType: LayoutType; question?: string }
 
     // На экран результата мы передаем готовые карты, чтобы ИИ их расшифровал
     // Временно используем any, пока не перенесем интерфейс CardInputDto на фронт
