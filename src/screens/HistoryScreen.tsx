@@ -17,6 +17,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { TarotApi } from '../api/tarot.api'
 import { TAROT_IMAGES } from '../constants/tarotImages'
+import { COLORS } from '../constants/theme'
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true)
@@ -151,7 +152,7 @@ export const HistoryScreen = () => {
                         <Ionicons
                             name={isExpanded ? 'chevron-up' : 'chevron-down'}
                             size={22}
-                            color="#D4AF37"
+                            color={COLORS.primary}
                         />
                     </View>
                 </View>
@@ -195,14 +196,14 @@ export const HistoryScreen = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={28} color="#D4AF37" />
+                    <Ionicons name="arrow-back" size={28} color={COLORS.primary} />
                 </TouchableOpacity>
                 <Text style={styles.screenTitle}>Дневник Раскладов</Text>
                 <View style={{ width: 28 }} />
             </View>
 
             {isInitialLoading ? (
-                <ActivityIndicator size="large" color="#D4AF37" style={{ marginTop: 50 }} />
+                <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 50 }} />
             ) : (
                 <FlatList
                     data={history}
@@ -216,7 +217,7 @@ export const HistoryScreen = () => {
                         isLoadingMore ? (
                             <ActivityIndicator
                                 size="small"
-                                color="#D4AF37"
+                                color={COLORS.primary}
                                 style={{ marginVertical: 20 }}
                             />
                         ) : null
@@ -237,7 +238,7 @@ export const HistoryScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0A0A1A' },
+    container: { flex: 1, backgroundColor: COLORS.background },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -246,21 +247,21 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#1A1A2A',
     },
-    screenTitle: { color: '#D4AF37', fontSize: 18, fontWeight: 'bold' },
+    screenTitle: { color: COLORS.primary, fontSize: 18, fontWeight: 'bold' },
     list: { padding: 16, paddingBottom: 40 },
 
     card: {
-        backgroundColor: '#111122',
+        backgroundColor: COLORS.modalBackground,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
         borderColor: '#222',
     },
-    cardActive: { borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.05)' },
+    cardActive: { borderColor: COLORS.primary, backgroundColor: COLORS.primaryLight },
 
     cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    dateTitle: { color: '#FFF', fontSize: 18, fontWeight: 'bold', textTransform: 'capitalize' },
+    dateTitle: { color: COLORS.textMain, fontSize: 18, fontWeight: 'bold', textTransform: 'capitalize' },
     headerActions: { flexDirection: 'row', alignItems: 'center' },
     deleteButton: { paddingHorizontal: 12, paddingVertical: 4 },
 
@@ -281,16 +282,16 @@ const styles = StyleSheet.create({
     questionPreview: { color: '#E0E0E0', fontSize: 15, fontStyle: 'italic', marginBottom: 4 },
 
     expandedBox: { marginTop: 12 },
-    divider: { height: 1, backgroundColor: 'rgba(212, 175, 55, 0.2)', marginBottom: 12 },
+    divider: { height: 1, backgroundColor: COLORS.primaryBorder, marginBottom: 12 },
     aiText: { color: '#E0E0E0', fontSize: 15, lineHeight: 24, textAlign: 'justify' },
 
     empty: { flex: 1, alignItems: 'center', marginTop: 80 },
     emptyText: {
-        color: '#D4AF37',
+        color: COLORS.primary,
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 16,
         marginBottom: 8,
     },
-    emptySubtext: { color: '#8A8A9E', fontSize: 14, textAlign: 'center', paddingHorizontal: 40 },
+    emptySubtext: { color: COLORS.textSecondary, fontSize: 14, textAlign: 'center', paddingHorizontal: 40 },
 })

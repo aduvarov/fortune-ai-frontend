@@ -17,6 +17,7 @@ import { RootStackParamList } from '../types/navigation'
 import { TarotApi } from '../api/tarot.api'
 import { CardInputDto } from '../types/dto'
 import { TAROT_IMAGES } from '../constants/tarotImages'
+import { COLORS } from '../constants/theme'
 
 type ResultScreenRouteProp = RouteProp<RootStackParamList, 'Result'>
 type ResultScreenNavProp = NativeStackNavigationProp<RootStackParamList, 'Result'>
@@ -105,7 +106,7 @@ export const ResultScreen = () => {
                     <Ionicons
                         name="home-outline"
                         size={24}
-                        color={isLoading ? '#555' : '#D4AF37'}
+                        color={isLoading ? '#555' : COLORS.primary}
                     />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Ответ Вселенной</Text>
@@ -162,7 +163,7 @@ export const ResultScreen = () => {
                 showsVerticalScrollIndicator={false}>
                 {isLoading ? (
                     <View style={styles.centerContainer}>
-                        <ActivityIndicator size="large" color="#D4AF37" />
+                        <ActivityIndicator size="large" color={COLORS.primary} />
                         <Text style={styles.loadingText}>Таролог читает ваши карты...</Text>
                         <Text style={styles.loadingSubtext}>Это может занять до 15 секунд</Text>
                     </View>
@@ -178,7 +179,7 @@ export const ResultScreen = () => {
                                 <Ionicons
                                     name="play-circle-outline"
                                     size={24}
-                                    color="#0A0A1A"
+                                    color={COLORS.primary}
                                     style={{ marginRight: 8 }}
                                 />
                                 <Text style={styles.adButtonText}>Смотреть рекламу</Text>
@@ -213,7 +214,7 @@ export const ResultScreen = () => {
                             <View style={styles.modalHeader}>
                                 <Text style={styles.modalTitle}>Базовая энергия карты</Text>
                                 <TouchableOpacity onPress={() => setSelectedCardForModal(null)}>
-                                    <Ionicons name="close" size={28} color="#D4AF37" />
+                                    <Ionicons name="close" size={28} color={COLORS.primary} />
                                 </TouchableOpacity>
                             </View>
 
@@ -273,7 +274,7 @@ export const ResultScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0A0A1A' },
+    container: { flex: 1, backgroundColor: COLORS.background },
     header: {
         padding: 16,
         flexDirection: 'row',
@@ -283,11 +284,11 @@ const styles = StyleSheet.create({
         borderBottomColor: '#1A1A2A',
     },
     homeButton: { padding: 8 },
-    headerTitle: { color: '#D4AF37', fontSize: 20, fontWeight: 'bold', letterSpacing: 1 },
+    headerTitle: { color: COLORS.primary, fontSize: 20, fontWeight: 'bold', letterSpacing: 1 },
     headerSpacer: { width: 40 },
 
     fixedCardsContainer: {
-        backgroundColor: '#0A0A1A',
+        backgroundColor: COLORS.background,
         borderBottomWidth: 1,
         borderBottomColor: '#1A1A2A',
         paddingVertical: 12,
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
 
     // Добавлена minHeight, чтобы картинки не прыгали вверх-вниз из-за разного кол-ва строк в тексте
     miniCardPosition: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 9,
         textTransform: 'uppercase',
         marginBottom: 4,
@@ -321,7 +322,7 @@ const styles = StyleSheet.create({
         width: 64,
         height: 100,
         borderWidth: 1,
-        borderColor: '#D4AF37',
+        borderColor: COLORS.primary,
         borderRadius: 6,
         overflow: 'hidden',
         backgroundColor: '#111',
@@ -329,11 +330,11 @@ const styles = StyleSheet.create({
     },
     miniCardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
     miniCardFallback: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 4 },
-    miniCardFallbackText: { color: '#D4AF37', fontSize: 8, textAlign: 'center' },
+    miniCardFallbackText: { color: COLORS.primary, fontSize: 8, textAlign: 'center' },
 
     // Добавлена minHeight для нижнего текста
     miniCardName: {
-        color: '#D4AF37',
+        color: COLORS.primary,
         fontSize: 10,
         textAlign: 'center',
         fontWeight: 'bold',
@@ -343,8 +344,8 @@ const styles = StyleSheet.create({
     responseScrollContent: { padding: 20, paddingBottom: 40 },
 
     centerContainer: { alignItems: 'center', justifyContent: 'center', marginTop: 60 },
-    loadingText: { color: '#D4AF37', fontSize: 18, marginTop: 20, fontWeight: '500' },
-    loadingSubtext: { color: '#8A8A9E', fontSize: 14, marginTop: 8, fontStyle: 'italic' },
+    loadingText: { color: COLORS.primary, fontSize: 18, marginTop: 20, fontWeight: '500' },
+    loadingSubtext: { color: COLORS.textSecondary, fontSize: 14, marginTop: 8, fontStyle: 'italic' },
 
     errorContainer: {
         alignItems: 'center',
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
         borderColor: '#FF6B6B',
     },
     errorText: {
-        color: '#FFF',
+        color: COLORS.textMain,
         fontSize: 16,
         textAlign: 'center',
         marginVertical: 16,
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
     },
     adButton: {
         flexDirection: 'row',
-        backgroundColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 24,
@@ -372,14 +373,14 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     adButtonText: {
-        color: '#0A0A1A',
+        color: COLORS.background,
         fontSize: 16,
         fontWeight: 'bold',
         textTransform: 'uppercase',
     },
 
     responseContainer: {
-        backgroundColor: '#111122',
+        backgroundColor: COLORS.modalBackground,
         padding: 20,
         borderRadius: 16,
         borderWidth: 1,
@@ -387,18 +388,18 @@ const styles = StyleSheet.create({
     },
     responseText: { color: '#E0E0E0', fontSize: 16, lineHeight: 26 },
 
-    footer: { padding: 20, backgroundColor: '#0A0A1A', borderTopWidth: 1, borderColor: '#1A1A2A' },
+    footer: { padding: 20, backgroundColor: COLORS.background, borderTopWidth: 1, borderColor: '#1A1A2A' },
     mainButton: {
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: '#D4AF37',
+        borderColor: COLORS.primary,
         paddingVertical: 16,
         borderRadius: 30,
         alignItems: 'center',
         width: '100%',
     },
     mainButtonText: {
-        color: '#D4AF37',
+        color: COLORS.primary,
         fontSize: 16,
         fontWeight: 'bold',
         textTransform: 'uppercase',
@@ -414,7 +415,7 @@ const styles = StyleSheet.create({
     modalContent: {
         width: '90%',
         maxHeight: '85%',
-        backgroundColor: '#111122',
+        backgroundColor: COLORS.modalBackground,
         borderRadius: 24,
         padding: 20,
         borderWidth: 1,
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 16,
     },
-    modalTitle: { color: '#D4AF37', fontSize: 18, fontWeight: 'bold' },
+    modalTitle: { color: COLORS.primary, fontSize: 18, fontWeight: 'bold' },
     modalScrollContent: { alignItems: 'center', paddingBottom: 20 },
 
     modalImageContainer: {
@@ -434,24 +435,24 @@ const styles = StyleSheet.create({
         height: 260,
         borderRadius: 12,
         borderWidth: 2,
-        borderColor: '#D4AF37',
+        borderColor: COLORS.primary,
         overflow: 'hidden',
         marginBottom: 16,
         backgroundColor: '#111',
     },
     modalLargeImage: { width: '100%', height: '100%', resizeMode: 'cover' },
     modalFallbackLarge: { justifyContent: 'center', alignItems: 'center', padding: 16 },
-    modalFallbackTextLarge: { color: '#D4AF37', fontSize: 16, textAlign: 'center' },
+    modalFallbackTextLarge: { color: COLORS.primary, fontSize: 16, textAlign: 'center' },
 
     modalCardTitle: {
-        color: '#FFF',
+        color: COLORS.textMain,
         fontSize: 22,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 4,
     },
     modalCardPosition: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 14,
         textTransform: 'uppercase',
         marginBottom: 16,
@@ -459,7 +460,7 @@ const styles = StyleSheet.create({
     divider: {
         width: '40%',
         height: 1,
-        backgroundColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
         marginBottom: 16,
         opacity: 0.5,
     },

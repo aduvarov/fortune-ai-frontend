@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Ionicons } from '@expo/vector-icons' // Встроенные иконки Expo
 import { RootStackParamList } from '../types/navigation'
+import { COLORS } from '../constants/theme'
 
 // Типизируем навигацию для этого конкретного экрана
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
@@ -19,20 +20,20 @@ export const HomeScreen = () => {
                 <TouchableOpacity
                     style={styles.iconButton}
                     onPress={() => navigation.navigate('History')}>
-                    <Ionicons name="journal-outline" size={28} color="#D4AF37" />
+                    <Ionicons name="journal-outline" size={28} color={COLORS.primary} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={styles.iconButton}
                     onPress={() => navigation.navigate('Settings')}>
-                    <Ionicons name="settings-outline" size={28} color="#D4AF37" />
+                    <Ionicons name="settings-outline" size={28} color={COLORS.primary} />
                 </TouchableOpacity>
             </View>
 
             {/* Центральная часть экрана */}
             <View style={styles.centerContent}>
                 {/* Здесь в будущем можно добавить красивую картинку или Lottie-анимацию */}
-                <Ionicons name="moon-outline" size={80} color="#D4AF37" style={styles.heroIcon} />
+                <Ionicons name="moon-outline" size={80} color={COLORS.primary} style={styles.heroIcon} />
 
                 <Text style={styles.title}>Fortune AI</Text>
                 <Text style={styles.subtitle}>Вселенная готова ответить на твой вопрос.</Text>
@@ -52,7 +53,7 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0A0A1A', // Глубокий ночной фон
+        backgroundColor: COLORS.background, // Глубокий ночной фон
     },
     header: {
         flexDirection: 'row',
@@ -75,34 +76,34 @@ const styles = StyleSheet.create({
         opacity: 0.9,
     },
     title: {
-        color: '#D4AF37', // Золотой
+        color: COLORS.primary, // Мистический синий
         fontSize: 36,
         fontWeight: '300', // Легкий, "воздушный" шрифт
         letterSpacing: 4,
         marginBottom: 12,
     },
     subtitle: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 16,
         textAlign: 'center',
         marginBottom: 48,
         fontStyle: 'italic',
     },
     mainButton: {
-        backgroundColor: 'rgba(212, 175, 55, 0.1)', // Полупрозрачный золотой фон
-        borderColor: '#D4AF37',
+        backgroundColor: COLORS.primaryLight, // Полупрозрачный фон
+        borderColor: COLORS.primary,
         borderWidth: 1,
         paddingVertical: 16,
         paddingHorizontal: 40,
         borderRadius: 30, // Скругленные края
-        shadowColor: '#D4AF37',
+        shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 10,
         elevation: 5, // Тень для Android
     },
     mainButtonText: {
-        color: '#D4AF37',
+        color: COLORS.primary,
         fontSize: 18,
         fontWeight: '600',
         letterSpacing: 2,

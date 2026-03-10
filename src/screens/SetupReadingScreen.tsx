@@ -16,6 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from '../types/navigation'
 import { LayoutType, DrawSource } from '../types/dto'
+import { COLORS } from '../constants/theme'
 
 type SetupScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SetupReading'>
 
@@ -134,7 +135,7 @@ export const SetupReadingScreen = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+                    <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
                     <Text style={styles.backText}>Назад</Text>
                 </TouchableOpacity>
             </View>
@@ -161,7 +162,7 @@ export const SetupReadingScreen = () => {
                                     <Ionicons
                                         name={option.icon}
                                         size={28}
-                                        color={isSelected ? '#0A0A1A' : '#D4AF37'}
+                                        color={isSelected ? COLORS.background : COLORS.primary}
                                     />
                                 </View>
                                 <Text
@@ -212,7 +213,7 @@ export const SetupReadingScreen = () => {
                                 <Ionicons
                                     name={option.icon}
                                     size={24}
-                                    color={isSelected ? '#0A0A1A' : '#D4AF37'}
+                                    color={isSelected ? COLORS.background : COLORS.primary}
                                     style={styles.sourceIcon}
                                 />
                                 <Text
@@ -236,7 +237,7 @@ export const SetupReadingScreen = () => {
                     <Text style={[styles.continueButtonText, !isContinueEnabled && styles.continueButtonTextDisabled]}>
                         Продолжить
                     </Text>
-                    <Ionicons name="arrow-forward" size={20} color={isContinueEnabled ? "#0A0A1A" : "rgba(255,255,255,0.3)"} />
+                    <Ionicons name="arrow-forward" size={20} color={isContinueEnabled ? COLORS.background : "rgba(255,255,255,0.3)"} />
                 </TouchableOpacity>
             </View>
 
@@ -254,7 +255,7 @@ export const SetupReadingScreen = () => {
                         {previewLayoutData && (
                             <>
                                 <View style={styles.modalIconContainer}>
-                                    <Ionicons name={previewLayoutData.icon} size={40} color="#D4AF37" />
+                                    <Ionicons name={previewLayoutData.icon} size={40} color={COLORS.primary} />
                                 </View>
                                 <Text style={styles.modalTitle}>{previewLayoutData.title}</Text>
                                 <Text style={styles.modalDesc}>{previewLayoutData.fullDesc}</Text>
@@ -265,7 +266,7 @@ export const SetupReadingScreen = () => {
                                         <TextInput
                                             style={styles.modalTextInput}
                                             placeholder="Например: Как пройдет встреча завтра?"
-                                            placeholderTextColor="#8A8A9E"
+                                            placeholderTextColor={COLORS.textSecondary}
                                             value={tempQuestion}
                                             onChangeText={setTempQuestion}
                                             multiline
@@ -301,7 +302,7 @@ export const SetupReadingScreen = () => {
                         {previewSourceData && (
                             <>
                                 <View style={styles.modalIconContainer}>
-                                    <Ionicons name={previewSourceData.icon} size={40} color="#D4AF37" />
+                                    <Ionicons name={previewSourceData.icon} size={40} color={COLORS.primary} />
                                 </View>
                                 <Text style={styles.modalTitle}>{previewSourceData.title}</Text>
                                 <Text style={styles.modalDesc}>{previewSourceData.fullDesc}</Text>
@@ -324,14 +325,14 @@ export const SetupReadingScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0A0A1A' },
+    container: { flex: 1, backgroundColor: COLORS.background },
     header: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 },
     backButton: { flexDirection: 'row', alignItems: 'center' },
-    backText: { color: '#D4AF37', fontSize: 16, marginLeft: 8 },
+    backText: { color: COLORS.primary, fontSize: 16, marginLeft: 8 },
     scrollContent: { paddingHorizontal: 20, paddingBottom: 24 },
 
     sectionTitle: {
-        color: '#FFFFFF',
+        color: COLORS.textMain,
         fontSize: 20,
         fontWeight: '600',
         marginBottom: 12,
@@ -349,39 +350,39 @@ const styles = StyleSheet.create({
     optionCard: {
         width: '48%',
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backgroundColor: COLORS.cardBackground,
         borderWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.3)',
+        borderColor: COLORS.primaryBorder,
         borderRadius: 16,
         padding: 16,
     },
-    optionCardActive: { backgroundColor: '#D4AF37', borderColor: '#D4AF37' },
+    optionCardActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
     iconContainer: {
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+        backgroundColor: COLORS.primaryLight,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 12,
     },
     iconContainerSelected: {
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        backgroundColor: COLORS.whiteMedium,
     },
-    optionTitle: { color: '#D4AF37', fontSize: 15, fontWeight: 'bold', marginBottom: 6, textAlign: 'center' },
-    optionDesc: { color: '#8A8A9E', fontSize: 12, textAlign: 'center', lineHeight: 16 },
-    textSelected: { color: '#0A0A1A' },
+    optionTitle: { color: COLORS.primary, fontSize: 15, fontWeight: 'bold', marginBottom: 6, textAlign: 'center' },
+    optionDesc: { color: COLORS.textSecondary, fontSize: 12, textAlign: 'center', lineHeight: 16 },
+    textSelected: { color: COLORS.background },
 
     activeQuestionCard: {
         marginTop: 16,
         padding: 12,
-        backgroundColor: 'rgba(212, 175, 55, 0.05)',
+        backgroundColor: COLORS.primaryLight,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.2)',
+        borderColor: COLORS.primaryBorder,
     },
-    activeQuestionLabel: { color: '#D4AF37', fontSize: 13, marginBottom: 4 },
-    activeQuestionText: { color: '#FFF', fontSize: 15, fontStyle: 'italic' },
+    activeQuestionLabel: { color: COLORS.primary, fontSize: 13, marginBottom: 4 },
+    activeQuestionText: { color: COLORS.textMain, fontSize: 15, fontStyle: 'italic' },
 
     sourceGrid: {
         flexDirection: 'row',
@@ -393,24 +394,24 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backgroundColor: COLORS.cardBackground,
         borderWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.3)',
+        borderColor: COLORS.primaryBorder,
         borderRadius: 16,
         padding: 14,
         paddingVertical: 18,
     },
     sourceIcon: { marginRight: 8 },
-    sourceTitle: { color: '#D4AF37', fontSize: 14, fontWeight: 'bold' },
+    sourceTitle: { color: COLORS.primary, fontSize: 14, fontWeight: 'bold' },
 
     footer: {
         padding: 16,
-        backgroundColor: '#0A0A1A',
+        backgroundColor: COLORS.background,
         borderTopWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.2)',
+        borderColor: COLORS.primaryBorder,
     },
     continueButton: {
-        backgroundColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -418,10 +419,10 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     continueButtonDisabled: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: COLORS.whiteLight,
     },
     continueButtonText: {
-        color: '#0A0A1A',
+        color: COLORS.background,
         fontSize: 16,
         fontWeight: 'bold',
         textTransform: 'uppercase',
@@ -429,24 +430,24 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     continueButtonTextDisabled: {
-        color: 'rgba(255, 255, 255, 0.3)',
+        color: COLORS.whiteMedium,
     },
 
     // Модалка
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: COLORS.overlay,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
     },
     modalContent: {
         width: '100%',
-        backgroundColor: '#111122',
+        backgroundColor: COLORS.modalBackground,
         borderRadius: 24,
         padding: 24,
         borderWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.5)',
+        borderColor: COLORS.primaryBorder,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
@@ -458,21 +459,21 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+        backgroundColor: COLORS.primaryLight,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
     },
-    modalTitle: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
+    modalTitle: { color: COLORS.primary, fontSize: 24, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
     modalDesc: { color: '#E0E0E0', fontSize: 16, textAlign: 'center', lineHeight: 24, marginBottom: 20 },
     
     modalInputSection: { width: '100%', marginBottom: 20 },
-    modalInputLabel: { color: '#8A8A9E', fontSize: 13, marginBottom: 8, marginLeft: 4 },
+    modalInputLabel: { color: COLORS.textSecondary, fontSize: 13, marginBottom: 8, marginLeft: 4 },
     modalTextInput: {
         backgroundColor: 'rgba(255,255,255,0.05)',
-        color: '#FFF',
+        color: COLORS.textMain,
         borderWidth: 1,
-        borderColor: 'rgba(212, 175, 55, 0.3)',
+        borderColor: COLORS.primaryBorder,
         borderRadius: 16,
         padding: 16,
         fontSize: 16,
@@ -489,16 +490,16 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 14,
         borderRadius: 16,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: COLORS.whiteLight,
         alignItems: 'center',
     },
-    modalCancelText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
+    modalCancelText: { color: COLORS.textMain, fontSize: 16, fontWeight: '600' },
     modalApproveBtn: {
         flex: 1,
         paddingVertical: 14,
         borderRadius: 16,
-        backgroundColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
         alignItems: 'center',
     },
-    modalApproveText: { color: '#0A0A1A', fontSize: 16, fontWeight: 'bold' },
+    modalApproveText: { color: COLORS.background, fontSize: 16, fontWeight: 'bold' },
 })

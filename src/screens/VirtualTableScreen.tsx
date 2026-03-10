@@ -17,6 +17,7 @@ import * as Haptics from 'expo-haptics' // <-- Импорт тактильног
 import { RootStackParamList } from '../types/navigation'
 import { TAROT_DECK, LAYOUT_CONFIG, TarotCardDef } from '../constants/tarot'
 import { TAROT_IMAGES } from '../constants/tarotImages'
+import { COLORS } from '../constants/theme'
 
 type VirtualTableRouteProp = RouteProp<RootStackParamList, 'VirtualTable'>
 type VirtualTableNavProp = NativeStackNavigationProp<RootStackParamList, 'VirtualTable'>
@@ -290,7 +291,7 @@ export const VirtualTableScreen = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={28} color="#D4AF37" />
+                    <Ionicons name="arrow-back" size={28} color={COLORS.primary} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Виртуальный Стол</Text>
                 <View style={{ width: 28 }} />
@@ -462,14 +463,14 @@ export const VirtualTableScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0A0A1A' },
+    container: { flex: 1, backgroundColor: COLORS.background },
     header: {
         padding: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    headerTitle: { color: '#D4AF37', fontSize: 20, fontWeight: 'bold' },
+    headerTitle: { color: COLORS.primary, fontSize: 20, fontWeight: 'bold' },
 
     slotsContainer: {
         flex: 1,
@@ -482,7 +483,7 @@ const styles = StyleSheet.create({
     },
     slotWrapper: { alignItems: 'center', width: '45%', marginBottom: 16 },
     slotText: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 12,
         marginBottom: 8,
         textTransform: 'uppercase',
@@ -506,7 +507,7 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: '#1A1A2A',
         borderWidth: 2,
-        borderColor: '#D4AF37',
+        borderColor: COLORS.primary,
         borderRadius: 12,
     },
     cardFace: {
@@ -525,15 +526,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#D4AF37',
+        borderColor: COLORS.primary,
         borderRadius: 12,
     },
-    cardFallbackText: { color: '#D4AF37', fontSize: 12, textAlign: 'center', padding: 4 },
+    cardFallbackText: { color: COLORS.primary, fontSize: 12, textAlign: 'center', padding: 4 },
 
     deckArea: { height: 320, justifyContent: 'flex-start', alignItems: 'center', zIndex: 1 },
-    targetPositionText: { color: '#D4AF37', fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+    targetPositionText: { color: COLORS.primary, fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
     hintText: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 14,
         marginBottom: 12,
         fontStyle: 'italic',
@@ -552,8 +553,8 @@ const styles = StyleSheet.create({
         width: 150,
         height: 220,
         borderRadius: 20,
-        backgroundColor: '#D4AF37',
-        shadowColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
+        shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 30,
@@ -566,7 +567,7 @@ const styles = StyleSheet.create({
         height: 200,
         backgroundColor: '#1A1A2A',
         borderWidth: 2,
-        borderColor: '#D4AF37',
+        borderColor: COLORS.primary,
         borderRadius: 12,
     },
 
@@ -574,14 +575,14 @@ const styles = StyleSheet.create({
     shufflingCard: { position: 'absolute', zIndex: 1 },
 
     mainButton: {
-        backgroundColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
         paddingVertical: 16,
         paddingHorizontal: 40,
         borderRadius: 30,
         marginTop: 40,
     },
     mainButtonText: {
-        color: '#0A0A1A',
+        color: COLORS.background,
         fontSize: 18,
         fontWeight: 'bold',
         textTransform: 'uppercase',

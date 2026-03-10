@@ -20,6 +20,7 @@ import { RootStackParamList } from '../types/navigation'
 import { CardInputDto } from '../types/dto'
 import { TAROT_DECK, LAYOUT_CONFIG, TarotCardDef } from '../constants/tarot'
 import { TAROT_IMAGES } from '../constants/tarotImages'
+import { COLORS } from '../constants/theme'
 
 type PhysicalInputRouteProp = RouteProp<RootStackParamList, 'PhysicalInput'>
 type PhysicalInputNavProp = NativeStackNavigationProp<RootStackParamList, 'PhysicalInput'>
@@ -109,7 +110,7 @@ export const PhysicalInputScreen = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#D4AF37" />
+                    <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
                     <Text style={styles.headerTitle}>Своя Колода</Text>
                 </TouchableOpacity>
             </View>
@@ -184,7 +185,7 @@ export const PhysicalInputScreen = () => {
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Поиск карты</Text>
                             <TouchableOpacity onPress={closeModal}>
-                                <Ionicons name="close" size={28} color="#D4AF37" />
+                                <Ionicons name="close" size={28} color={COLORS.primary} />
                             </TouchableOpacity>
                         </View>
 
@@ -193,7 +194,7 @@ export const PhysicalInputScreen = () => {
                             <TextInput
                                 style={styles.searchInput}
                                 placeholder="Например: 9 пента, туз..."
-                                placeholderTextColor="#8A8A9E"
+                                placeholderTextColor={COLORS.textSecondary}
                                 value={searchQuery}
                                 onChangeText={setSearchQuery}
                                 autoFocus={true} // Автоматически открываем клавиатуру
@@ -204,8 +205,8 @@ export const PhysicalInputScreen = () => {
                                 <Switch
                                     value={isReversedToggle}
                                     onValueChange={setIsReversedToggle}
-                                    trackColor={{ false: '#333', true: '#D4AF37' }}
-                                    thumbColor={isReversedToggle ? '#FFF' : '#8A8A9E'}
+                                    trackColor={{ false: '#333', true: COLORS.primary }}
+                                    thumbColor={isReversedToggle ? COLORS.textMain : COLORS.textSecondary}
                                 />
                             </View>
                         </View>
@@ -253,13 +254,13 @@ export const PhysicalInputScreen = () => {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0A0A1A' },
+    container: { flex: 1, backgroundColor: COLORS.background },
     header: { padding: 16, flexDirection: 'row', alignItems: 'center' },
     backButton: { flexDirection: 'row', alignItems: 'center' },
-    headerTitle: { color: '#D4AF37', fontSize: 20, fontWeight: 'bold', marginLeft: 16 },
+    headerTitle: { color: COLORS.primary, fontSize: 20, fontWeight: 'bold', marginLeft: 16 },
     content: { padding: 20 },
     instructions: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 16,
         marginBottom: 24,
         textAlign: 'center',
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     slotsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 16 },
     slotWrapper: { alignItems: 'center', width: '45%', marginBottom: 16 },
     slotPositionTitle: {
-        color: '#8A8A9E',
+        color: COLORS.textSecondary,
         fontSize: 12,
         marginBottom: 8,
         textTransform: 'uppercase',
@@ -289,20 +290,20 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.02)',
         overflow: 'hidden',
     },
-    slotBorderFilled: { borderColor: '#D4AF37', borderStyle: 'solid' },
+    slotBorderFilled: { borderColor: COLORS.primary, borderStyle: 'solid' },
     cardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
-    slotCardName: { color: '#D4AF37', fontSize: 12, textAlign: 'center', marginTop: 8, height: 32 },
+    slotCardName: { color: COLORS.primary, fontSize: 12, textAlign: 'center', marginTop: 8, height: 32 },
 
     footer: { padding: 20, borderTopWidth: 1, borderColor: '#1A1A2A' },
     mainButton: {
-        backgroundColor: '#D4AF37',
+        backgroundColor: COLORS.primary,
         paddingVertical: 16,
         borderRadius: 30,
         alignItems: 'center',
     },
     mainButtonDisabled: { backgroundColor: '#333' },
     mainButtonText: {
-        color: '#0A0A1A',
+        color: COLORS.background,
         fontSize: 18,
         fontWeight: 'bold',
         textTransform: 'uppercase',
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
     // Стили модалки
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-end' },
     modalContent: {
-        backgroundColor: '#111122',
+        backgroundColor: COLORS.modalBackground,
         height: '90%',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
@@ -325,12 +326,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 16,
     },
-    modalTitle: { color: '#FFF', fontSize: 22, fontWeight: 'bold' },
+    modalTitle: { color: COLORS.textMain, fontSize: 22, fontWeight: 'bold' },
 
     controlsContainer: { marginBottom: 16 },
     searchInput: {
-        backgroundColor: '#0A0A1A',
-        color: '#FFF',
+        backgroundColor: COLORS.background,
+        color: COLORS.textMain,
         padding: 14,
         borderRadius: 12,
         fontSize: 16,
@@ -342,13 +343,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#0A0A1A',
+        backgroundColor: COLORS.background,
         padding: 12,
         borderRadius: 12,
         borderWidth: 1,
         borderColor: '#333',
     },
-    switchLabel: { color: '#FFF', fontSize: 14 },
+    switchLabel: { color: COLORS.textMain, fontSize: 14 },
 
     // Сетка в модалке (3 колонки)
     gridRow: { justifyContent: 'space-between', marginBottom: 20 },
@@ -361,11 +362,11 @@ const styles = StyleSheet.create({
         borderColor: '#333',
         overflow: 'hidden',
         marginBottom: 6,
-        backgroundColor: '#0A0A1A',
+        backgroundColor: COLORS.background,
         justifyContent: 'center',
         alignItems: 'center',
     },
     modalCardImage: { width: '100%', height: '100%', resizeMode: 'cover' },
-    modalFallbackText: { color: '#D4AF37', fontSize: 10, textAlign: 'center' },
-    deckItemText: { color: '#8A8A9E', fontSize: 11, textAlign: 'center' },
+    modalFallbackText: { color: COLORS.primary, fontSize: 10, textAlign: 'center' },
+    deckItemText: { color: COLORS.textSecondary, fontSize: 11, textAlign: 'center' },
 })

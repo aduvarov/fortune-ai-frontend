@@ -6,6 +6,7 @@ import { RootStackParamList } from '../types/navigation'
 import { getOrCreateDeviceId } from '../utils/device'
 import { TarotApi } from '../api/tarot.api'
 import { useAuthStore } from '../store/useAuthStore'
+import { COLORS } from '../constants/theme'
 
 type SplashScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>
 
@@ -42,7 +43,7 @@ export const SplashScreen = () => {
         <View style={styles.container}>
             <Text style={styles.title}>FORTUNE AI</Text>
             <Text style={styles.subtitle}>Связь с космосом...</Text>
-            <ActivityIndicator size="large" color="#D4AF37" style={styles.loader} />
+            <ActivityIndicator size="large" color={COLORS.primary} style={styles.loader} />
         </View>
     )
 }
@@ -50,19 +51,19 @@ export const SplashScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0A0A1A', // Наш фирменный мистический темный фон
+        backgroundColor: COLORS.background, // Наш фирменный мистический темный фон
         alignItems: 'center',
         justifyContent: 'center',
     },
     title: {
-        color: '#D4AF37', // Золотой
+        color: COLORS.primary, // Золотой
         fontSize: 32,
         fontWeight: 'bold',
         letterSpacing: 3,
         marginBottom: 8,
     },
     subtitle: {
-        color: '#8A8A9E', // Приглушенный серо-синий
+        color: COLORS.textSecondary, // Приглушенный серо-синий
         fontSize: 16,
         fontStyle: 'italic',
     },

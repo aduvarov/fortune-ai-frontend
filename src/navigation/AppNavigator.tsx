@@ -10,6 +10,7 @@ import { PhysicalInputScreen } from '../screens/PhysicalInputScreen'
 import { ResultScreen } from '../screens/ResultScreen'
 import { VirtualTableScreen } from '../screens/VirtualTableScreen'
 import { HistoryScreen } from '../screens/HistoryScreen'
+import { COLORS } from '../constants/theme'
 
 const SettingsScreen = () => (
     <View style={styles.screen}>
@@ -26,7 +27,7 @@ export const AppNavigator = () => {
                 initialRouteName="Splash"
                 screenOptions={{
                     headerShown: false, // Отключаем уродливые системные заголовки для атмосферы
-                    contentStyle: { backgroundColor: '#0A0A1A' }, // Глубокий темный фон по умолчанию
+                    contentStyle: { backgroundColor: COLORS.background }, // Глубокий темный фон по умолчанию
                     animation: 'fade', // Плавное перетекание экранов (как туман)
                 }}>
                 <Stack.Screen name="Splash" component={SplashScreen} />
@@ -45,12 +46,12 @@ export const AppNavigator = () => {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#0A0A1A', // Темно-синий/черный мистический фон
+        backgroundColor: COLORS.background, // Темно-синий/черный мистический фон
         alignItems: 'center',
         justifyContent: 'center',
     },
     text: {
-        color: '#D4AF37', // Приглушенное золото
+        color: COLORS.primary, // Приглушенное золото -> Мистический синий
         fontSize: 24,
         fontWeight: 'bold',
     },
