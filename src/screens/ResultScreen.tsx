@@ -17,16 +17,13 @@ import { RootStackParamList } from '../types/navigation'
 import { TarotApi } from '../api/tarot.api'
 import { CardInputDto } from '../types/dto'
 import { TAROT_IMAGES } from '../constants/tarotImages'
+import { TAROT_DESCRIPTIONS } from '../constants/tarotDescriptions'
 import { COLORS } from '../constants/theme'
 
 type ResultScreenRouteProp = RouteProp<RootStackParamList, 'Result'>
 type ResultScreenNavProp = NativeStackNavigationProp<RootStackParamList, 'Result'>
 
-const MOCK_CARD_DESCRIPTION = `Эта карта несет в себе мощный поток первозданной энергии, символизируя глубокие трансформации и скрытые потенциалы вашего подсознания. В классической традиции Таро она указывает на необходимость прислушаться к своей интуиции и обратить внимание на знаки, которые посылает Вселенная. 
-
-В прямом положении она говорит о ясности намерений, прорыве в застоявшихся делах и внезапном озарении, которое поможет решить давнюю проблему. Это архетип силы воли, направленной в созидательное русло. Вы находитесь на пороге важного открытия, которое потребует от вас смелости и готовности выйти из зоны комфорта.
-
-Энергия этой карты призывает к балансу: не торопите события, но и не упускайте открывающиеся возможности. Обратите внимание на свое окружение — возможно, нужный ответ уже находится рядом с вами, просто вы его не замечаете из-за повседневной суеты. Доверьтесь потоку, позвольте событиям развиваться естественным путем, и вы увидите, как преграды рушатся, уступая место новым, светлым перспективам. Ваша внутренняя мудрость — ваш лучший компас на данном этапе пути.`
+const DEFAULT_DESCRIPTION = 'Описание этой карты скоро появится в нашей магической библиотеке.'
 
 export const ResultScreen = () => {
     const route = useRoute<ResultScreenRouteProp>()
@@ -262,7 +259,7 @@ export const ResultScreen = () => {
                                             ослаблена или искажена.{'\n\n'}
                                         </Text>
                                     )}
-                                    {MOCK_CARD_DESCRIPTION}
+                                    {TAROT_DESCRIPTIONS[selectedCardForModal.id] || DEFAULT_DESCRIPTION}
                                 </Text>
                             </ScrollView>
                         </View>
