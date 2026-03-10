@@ -40,7 +40,7 @@ export const SplashScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>TAROT AI</Text>
+            <Text style={styles.title}>FORTUNE AI</Text>
             <Text style={styles.subtitle}>Связь с космосом...</Text>
             <ActivityIndicator size="large" color="#D4AF37" style={styles.loader} />
         </View>
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         color: '#D4AF37', // Золотой
         fontSize: 32,
         fontWeight: 'bold',
-        letterSpacing: 4,
+        letterSpacing: 3,
         marginBottom: 8,
     },
     subtitle: {
