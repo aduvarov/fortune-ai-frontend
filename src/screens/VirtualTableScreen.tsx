@@ -13,11 +13,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Ionicons } from '@expo/vector-icons'
-import * as Haptics from 'expo-haptics' // <-- Импорт тактильного отклика
+import * as Haptics from 'expo-haptics'
 import { RootStackParamList } from '../types/navigation'
 import { TAROT_DECK, LAYOUT_CONFIG, TarotCardDef } from '../constants/tarot'
 import { TAROT_IMAGES } from '../constants/tarotImages'
 import { COLORS } from '../constants/theme'
+import { useSettingsStore } from '../store/useSettingsStore'
 
 type VirtualTableRouteProp = RouteProp<RootStackParamList, 'VirtualTable'>
 type VirtualTableNavProp = NativeStackNavigationProp<RootStackParamList, 'VirtualTable'>
@@ -38,6 +39,13 @@ export const VirtualTableScreen = () => {
     const question = route.params.question
     const positions = LAYOUT_CONFIG[layoutType]
 
+    // Настройка вибрации — через ref, чтобы PanResponder видел актуальное значение
+    const { hapticsEnabled } = useSettingsStore()
+    const hapticsEnabledRef = useRef(hapticsEnabled)
+    useEffect(() => {
+        hapticsEnabledRef.current = hapticsEnabled
+    }, [hapticsEnabled])
+
     const [deck, setDeck] = useState<TarotCardDef[]>([])
     const [drawnCards, setDrawnCards] = useState<(TarotCardDef & { isReversed: boolean })[]>([])
     const [phase, setPhase] = useState<'shuffling' | 'drawing' | 'done'>('shuffling')
@@ -47,6 +55,7 @@ export const VirtualTableScreen = () => {
     const deckRef = useRef(deck)
     const drawnCountRef = useRef(0)
     const chargeStartTime = useRef<number>(0)
+    const lastMoveHapticTime = useRef<number>(0)
 
     useEffect(() => {
         phaseRef.current = phase
@@ -116,8 +125,10 @@ export const VirtualTableScreen = () => {
 
         // Запускаем пульсирующую вибрацию во время тасования
         const hapticInterval = setInterval(() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-        }, 300) // Каждые 300мс (на каждое сведение/разведение карт)
+            if (hapticsEnabledRef.current) {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+            }
+        }, 300)
 
         // Рандомное время тасования от 3.5 до 5 секунд
         const shuffleTime = Math.floor(Math.random() * 1500) + 3500
@@ -127,7 +138,9 @@ export const VirtualTableScreen = () => {
             clearInterval(hapticInterval) // Останавливаем вибрацию
 
             // Финальный сильный щелчок по завершении тасования
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+            if (hapticsEnabledRef.current) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+            }
 
             // Возвращаем все "теневые" карты строго в центр
             Animated.parallel([
@@ -177,10 +190,23 @@ export const VirtualTableScreen = () => {
 
             onPanResponderGrant: () => {
                 chargeStartTime.current = Date.now()
+                lastMoveHapticTime.current = Date.now()
                 setHintMsg('Передаю энергию...')
                 startPulse()
                 // Легкий щелчок при касании колоды
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                if (hapticsEnabledRef.current) {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                }
+            },
+            onPanResponderMove: () => {
+                const now = Date.now()
+                // Вибрация каждые 150мс при движении пальца по колоде
+                if (now - lastMoveHapticTime.current >= 150) {
+                    lastMoveHapticTime.current = now
+                    if (hapticsEnabledRef.current) {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                    }
+                }
             },
             onPanResponderRelease: (evt, gestureState) => {
                 stopPulse()
@@ -206,7 +232,9 @@ export const VirtualTableScreen = () => {
                     drawnCountRef.current += 1
 
                     // Щелчок при успешной "зарядке" и вылете карты
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+                    if (hapticsEnabledRef.current) {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+                    }
 
                     Animated.parallel([
                         Animated.spring(entryAnims[currentIdx], {
@@ -226,14 +254,18 @@ export const VirtualTableScreen = () => {
                         if (drawnCountRef.current === positions.length) {
                             setPhase('done')
                             setHintMsg('Все карты разложены')
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+                            if (hapticsEnabledRef.current) {
+                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+                            }
                         } else {
                             setHintMsg('Водите пальцем по колоде (2 сек)')
                         }
                     })
                 } else {
                     setHintMsg('Слишком быстро. Держите палец дольше (2 сек)')
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error) // Ошибка - короткая вибрация
+                    if (hapticsEnabledRef.current) {
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+                    }
                 }
             },
         }),

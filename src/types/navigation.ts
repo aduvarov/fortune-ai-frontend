@@ -6,7 +6,7 @@ export type RootStackParamList = {
     Home: undefined // undefined значит, что экран не требует параметров при открытии
     History: undefined
     Settings: undefined
-    SetupReading: undefined
+    SetupReading: { initialLayout?: LayoutType } | undefined
 
     // На стол мы передаем тип расклада (daily, chronological и т.д.)
     VirtualTable: { layoutType: LayoutType; question?: string }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     View,
     Text,
@@ -11,14 +11,16 @@ import {
     Modal,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from '../types/navigation'
 import { LayoutType, DrawSource } from '../types/dto'
 import { COLORS } from '../constants/theme'
+import { useSettingsStore } from '../store/useSettingsStore'
 
 type SetupScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SetupReading'>
+type SetupScreenRouteProp = RouteProp<RootStackParamList, 'SetupReading'>
 
 const LAYOUT_OPTIONS: { id: LayoutType; title: string; desc: string; icon: any; fullDesc?: string }[] = [
     {
@@ -68,9 +70,11 @@ const SOURCE_OPTIONS: { id: DrawSource; title: string; icon: any; fullDesc: stri
 
 export const SetupReadingScreen = () => {
     const navigation = useNavigation<SetupScreenNavigationProp>()
+    const route = useRoute<SetupScreenRouteProp>()
+    const { defaultDrawSource } = useSettingsStore()
 
     const [selectedLayout, setSelectedLayout] = useState<LayoutType | null>(null)
-    const [selectedSource, setSelectedSource] = useState<DrawSource | null>(null)
+    const [selectedSource, setSelectedSource] = useState<DrawSource | null>(defaultDrawSource)
     const [question, setQuestion] = useState('')
 
     // Модалка для Раскладов
@@ -81,6 +85,17 @@ export const SetupReadingScreen = () => {
     // Модалка для Колоды
     const [sourceModalVisible, setSourceModalVisible] = useState(false)
     const [previewSourceId, setPreviewSourceId] = useState<DrawSource | null>(null)
+
+    // Если пришли с HomeScreen с уже выбранным раскладом — сразу открываем модалку
+    useEffect(() => {
+        const initialLayout = route.params?.initialLayout
+        if (initialLayout) {
+            setPreviewLayoutId(initialLayout)
+            setTempQuestion('')
+            setLayoutModalVisible(true)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const handleContinue = () => {
         if (!selectedLayout || !selectedSource) return

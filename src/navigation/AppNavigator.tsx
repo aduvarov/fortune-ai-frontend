@@ -1,5 +1,4 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/navigation'
@@ -10,13 +9,8 @@ import { PhysicalInputScreen } from '../screens/PhysicalInputScreen'
 import { ResultScreen } from '../screens/ResultScreen'
 import { VirtualTableScreen } from '../screens/VirtualTableScreen'
 import { HistoryScreen } from '../screens/HistoryScreen'
+import { SettingsScreen } from '../screens/SettingsScreen'
 import { COLORS } from '../constants/theme'
-
-const SettingsScreen = () => (
-    <View style={styles.screen}>
-        <Text style={styles.text}>⚙️ Настройки и Лимиты</Text>
-    </View>
-)
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -26,9 +20,9 @@ export const AppNavigator = () => {
             <Stack.Navigator
                 initialRouteName="Splash"
                 screenOptions={{
-                    headerShown: false, // Отключаем уродливые системные заголовки для атмосферы
-                    contentStyle: { backgroundColor: COLORS.background }, // Глубокий темный фон по умолчанию
-                    animation: 'fade', // Плавное перетекание экранов (как туман)
+                    headerShown: false,
+                    contentStyle: { backgroundColor: COLORS.background },
+                    animation: 'fade',
                 }}>
                 <Stack.Screen name="Splash" component={SplashScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
@@ -42,17 +36,3 @@ export const AppNavigator = () => {
         </NavigationContainer>
     )
 }
-
-const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: COLORS.background, // Темно-синий/черный мистический фон
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    text: {
-        color: COLORS.primary, // Приглушенное золото -> Мистический синий
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-})
