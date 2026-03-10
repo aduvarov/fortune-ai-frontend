@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         color: '#D4AF37', // Золотой
         fontSize: 36,
         fontWeight: '300', // Легкий, "воздушный" шрифт
-        letterSpacing: 6,
+        letterSpacing: 4,
         marginBottom: 12,
     },
     subtitle: {
