@@ -13,10 +13,22 @@ type SplashScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 
 export const SplashScreen = () => {
     const navigation = useNavigation<SplashScreenNavigationProp>()
     const setAuth = useAuthStore(state => state.setAuth)
+    const token = useAuthStore(state => state.token)
+    const user = useAuthStore(state => state.user)
+    const isHydrated = useAuthStore(state => state.isHydrated)
 
     useEffect(() => {
         const initializeApp = async () => {
             try {
+                if (!isHydrated) {
+                    return
+                }
+
+                if (token && user) {
+                    navigation.replace('Home')
+                    return
+                }
+
                 // 1. Получаем или генерируем ID устройства
                 const deviceId = await getOrCreateDeviceId()
 
@@ -40,7 +52,7 @@ export const SplashScreen = () => {
         }
 
         initializeApp()
-    }, [navigation, setAuth])
+    }, [isHydrated, navigation, setAuth, token, user])
 
     return (
         <View style={styles.container}>

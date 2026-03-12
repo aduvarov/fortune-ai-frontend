@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { getOrCreateDeviceId } from '../utils/device';
 import { RootStackParamList } from '../types/navigation';
 import { COLORS } from '../constants/theme';
 import { supabase } from '../utils/supabase';
@@ -23,8 +24,6 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 });
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -32,20 +31,24 @@ type AuthScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'A
 
 const AuthScreen = () => {
     const navigation = useNavigation<AuthScreenNavigationProp>();
-    const { token: oldToken, setAuth } = useAuthStore();
-    
+    const { setAuth } = useAuthStore();
+
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSync = async () => {
-        if (oldToken) {
+    const handleSync = async (anonymousToken: string) => {
+        if (anonymousToken) {
             try {
-                await authApi.syncAccounts(oldToken);
+                await authApi.syncAccounts(anonymousToken);
                 console.log('History synced successfully');
             } catch (err) {
                 console.error('Failed to sync history:', err);
+                Alert.alert(
+                    'Внимание',
+                    'Ваша история анонимных гаданий не была перенесена. Вы можете продолжить, но старые записи могут быть недоступны.'
+                );
             }
         }
     };
@@ -56,24 +59,32 @@ const AuthScreen = () => {
             return;
         }
 
+        // Захватываем анонимный токен ПЕРЕД входом
+        const anonymousToken = useAuthStore.getState().token;
+
         setIsLoading(true);
         try {
-            const { data, error } = isLogin 
+            const { data, error } = isLogin
                 ? await supabase.auth.signInWithPassword({ email, password })
                 : await supabase.auth.signUp({ email, password });
 
             if (error) throw error;
 
             if (data.session && data.user) {
-                await handleSync();
-                
+                const deviceId = await getOrCreateDeviceId();
                 setAuth(data.session.access_token, {
                     id: data.user.id,
-                    deviceId: '',
+                    deviceId,
                     role: 'user',
                     email: data.user.email,
                     authProvider: 'email',
                 });
+
+                // Синхронизируем ЯВНО передавая новый токен
+                if (anonymousToken) {
+                    await handleSync(anonymousToken);
+                }
+
                 navigation.replace('Home');
             } else if (!isLogin) {
                 Alert.alert('Успех', 'Пожалуйста, проверьте свою почту для подтверждения (если требуется).');
@@ -86,11 +97,14 @@ const AuthScreen = () => {
     };
 
     const handleGoogleAuth = async () => {
+        // Захватываем анонимный токен ПЕРЕД входом
+        const anonymousToken = useAuthStore.getState().token;
+
         setIsLoading(true);
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
-            
+
             if (userInfo.data?.idToken) {
                 const { data, error } = await supabase.auth.signInWithIdToken({
                     provider: 'google',
@@ -100,15 +114,20 @@ const AuthScreen = () => {
                 if (error) throw error;
 
                 if (data.session && data.user) {
-                    await handleSync();
-                    
+                    const deviceId = await getOrCreateDeviceId();
                     setAuth(data.session.access_token, {
                         id: data.user.id,
-                        deviceId: '',
+                        deviceId,
                         role: 'user',
                         email: data.user.email,
                         authProvider: 'google',
                     });
+
+                    // Синхронизируем ЯВНО передавая новый токен
+                    if (anonymousToken) {
+                        await handleSync(anonymousToken);
+                    }
+
                     navigation.replace('Home');
                 }
             }
@@ -121,12 +140,12 @@ const AuthScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView 
+            <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
                 <ScrollView contentContainerStyle={styles.scrollContent}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => navigation.goBack()}
                     >
@@ -135,8 +154,8 @@ const AuthScreen = () => {
 
                     <Text style={styles.title}>{isLogin ? 'С возвращением' : 'Присоединяйтесь'}</Text>
                     <Text style={styles.subtitle}>
-                        {isLogin 
-                            ? 'Войдите, чтобы сохранить историю своих гаданий' 
+                        {isLogin
+                            ? 'Войдите, чтобы сохранить историю своих гаданий'
                             : 'Создайте аккаунт, чтобы ваши расклады были всегда под рукой'}
                     </Text>
 
@@ -166,8 +185,8 @@ const AuthScreen = () => {
                             />
                         </View>
 
-                        <TouchableOpacity 
-                            style={styles.mainButton} 
+                        <TouchableOpacity
+                            style={styles.mainButton}
                             onPress={handleEmailAuth}
                             disabled={isLoading}
                         >
@@ -184,8 +203,8 @@ const AuthScreen = () => {
                             <View style={styles.divider} />
                         </View>
 
-                        <TouchableOpacity 
-                            style={styles.googleButton} 
+                        <TouchableOpacity
+                            style={styles.googleButton}
                             onPress={handleGoogleAuth}
                             disabled={isLoading}
                         >
