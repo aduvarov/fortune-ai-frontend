@@ -7,6 +7,8 @@ export interface User {
     id: string
     deviceId: string
     role: string
+    email?: string | null
+    authProvider?: 'anonymous' | 'email' | 'google'
 }
 
 // Типизируем состояние стора
@@ -28,7 +30,10 @@ export const useAuthStore = create<AuthState>()(
 
             setAuth: (token, user) => set({ token, user }),
 
-            logout: () => set({ token: null, user: null }),
+            logout: () => {
+                // Полный сброс. Новый deviceId будет создан при следующем запуске (SplashScreen)
+                set({ token: null, user: null })
+            },
 
             setHydrated: state => set({ isHydrated: state }),
         }),

@@ -32,6 +32,7 @@ export const AppNavigator = () => {
                 <Stack.Screen name="VirtualTable" component={VirtualTableScreen} />
                 <Stack.Screen name="PhysicalInput" component={PhysicalInputScreen} />
                 <Stack.Screen name="Result" component={ResultScreen} />
+                <Stack.Screen name="Auth" component={require('../screens/AuthScreen').default} />
             </Stack.Navigator>
         </NavigationContainer>
     )

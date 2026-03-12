@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from '../types/navigation'
 import { LayoutType } from '../types/dto'
 import { COLORS } from '../constants/theme'
+import { useAuthStore } from '../store/useAuthStore'
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
@@ -124,6 +125,7 @@ const QUICK_CARDS: QuickCardConfig[] = [
 
 export const HomeScreen = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
+    const { user } = useAuthStore()
 
     const stars = useMemo(() => generateStars(), [])
 
@@ -253,17 +255,31 @@ export const HomeScreen = () => {
 
             {/* Верхняя панель */}
             <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.iconButton}
-                    onPress={() => navigation.navigate('History')}>
-                    <Ionicons name="journal-outline" size={26} color={COLORS.primary} />
-                </TouchableOpacity>
+                <View style={styles.headerLeft}>
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => navigation.navigate('History')}>
+                        <Ionicons name="journal-outline" size={26} color={COLORS.primary} />
+                    </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity
-                    style={styles.iconButton}
-                    onPress={() => navigation.navigate('Settings')}>
-                    <Ionicons name="settings-outline" size={26} color={COLORS.primary} />
-                </TouchableOpacity>
+                <View style={styles.headerRight}>
+                    <TouchableOpacity
+                        style={[styles.iconButton, { marginRight: 10 }]}
+                        onPress={() => user?.authProvider !== 'anonymous' ? navigation.navigate('Settings') : navigation.navigate('Auth')}>
+                        <Ionicons 
+                            name={user?.authProvider !== 'anonymous' ? "person-circle-outline" : "log-in-outline"} 
+                            size={26} 
+                            color={COLORS.primary} 
+                        />
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() => navigation.navigate('Settings')}>
+                        <Ionicons name="settings-outline" size={26} color={COLORS.primary} />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <ScrollView
@@ -381,9 +397,16 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: 20,
         paddingTop: 8,
         paddingBottom: 4,
+    },
+    headerLeft: {
+        flexDirection: 'row',
+    },
+    headerRight: {
+        flexDirection: 'row',
     },
     iconButton: {
         padding: 10,

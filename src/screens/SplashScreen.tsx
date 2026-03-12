@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/navigation'
@@ -31,8 +31,11 @@ export const SplashScreen = () => {
                 navigation.replace('Home')
             } catch (error) {
                 console.error('Ошибка инициализации приложения:', error)
-                // Здесь можно добавить логику показа кнопки "Повторить попытку"
-                // Но для MVP мы просто попробуем пустить юзера дальше (или можно зациклить)
+                Alert.alert(
+                    'Ошибка связи',
+                    'Не удалось подключиться к серверу. Попробуйте еще раз.',
+                    [{ text: 'Повторить', onPress: initializeApp }]
+                )
             }
         }
 

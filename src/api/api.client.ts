@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from '../store/useAuthStore'
 import Constants from 'expo-constants' // Для получения deviceId позже
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.11.11:3000'
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://devlab.kz:3333'
 
 export const apiClient = axios.create({
     baseURL: BASE_URL,

@@ -20,4 +20,5 @@ export type RootStackParamList = {
         drawSource: DrawSource
         question?: string // <-- И сюда
     }
+    Auth: undefined
 }
