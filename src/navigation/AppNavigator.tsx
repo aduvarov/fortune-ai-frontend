@@ -10,6 +10,7 @@ import { ResultScreen } from '../screens/ResultScreen'
 import { VirtualTableScreen } from '../screens/VirtualTableScreen'
 import { HistoryScreen } from '../screens/HistoryScreen'
 import { SettingsScreen } from '../screens/SettingsScreen'
+import { DesignPlaygroundScreen } from '../screens/DesignPlaygroundScreen'
 import { COLORS } from '../constants/theme'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -33,6 +34,10 @@ export const AppNavigator = () => {
                 <Stack.Screen name="PhysicalInput" component={PhysicalInputScreen} />
                 <Stack.Screen name="Result" component={ResultScreen} />
                 <Stack.Screen name="Auth" component={require('../screens/AuthScreen').default} />
+                <Stack.Screen
+                    name="DesignPlayground"
+                    component={DesignPlaygroundScreen}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     )

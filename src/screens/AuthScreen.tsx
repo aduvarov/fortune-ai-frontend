@@ -20,11 +20,11 @@ import { COLORS } from '../constants/theme';
 import { supabase } from '../utils/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { authApi } from '../api/auth.api';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-
-GoogleSignin.configure({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-});
+import {
+    createMockToken,
+    createMockUser,
+    isMockAuthEnabled,
+} from '../utils/dev';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 type AuthScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Auth'>;
@@ -64,6 +64,16 @@ const AuthScreen = () => {
 
         setIsLoading(true);
         try {
+            if (isMockAuthEnabled) {
+                const deviceId = await getOrCreateDeviceId();
+                setAuth(
+                    createMockToken('email'),
+                    createMockUser('email', deviceId, email),
+                );
+                navigation.replace('Home');
+                return;
+            }
+
             const { data, error } = isLogin
                 ? await supabase.auth.signInWithPassword({ email, password })
                 : await supabase.auth.signUp({ email, password });
@@ -102,6 +112,21 @@ const AuthScreen = () => {
 
         setIsLoading(true);
         try {
+            if (isMockAuthEnabled) {
+                const deviceId = await getOrCreateDeviceId();
+                setAuth(
+                    createMockToken('google'),
+                    createMockUser('google', deviceId, 'design@google.dev'),
+                );
+                navigation.replace('Home');
+                return;
+            }
+
+            const { GoogleSignin } = require('@react-native-google-signin/google-signin');
+            GoogleSignin.configure({
+                webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+            });
+
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
 
@@ -151,6 +176,15 @@ const AuthScreen = () => {
                     >
                         <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
                     </TouchableOpacity>
+
+                    {isMockAuthEnabled && (
+                        <View style={styles.devBanner}>
+                            <Ionicons name="flask-outline" size={18} color={COLORS.background} />
+                            <Text style={styles.devBannerText}>
+                                Mock auth mode: Google и email логин эмулируются без native SDK
+                            </Text>
+                        </View>
+                    )}
 
                     <Text style={styles.title}>{isLogin ? 'С возвращением' : 'Присоединяйтесь'}</Text>
                     <Text style={styles.subtitle}>
@@ -239,6 +273,23 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingHorizontal: 24,
         paddingBottom: 40,
+    },
+    devBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: COLORS.primary,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginBottom: 18,
+    },
+    devBannerText: {
+        flex: 1,
+        color: COLORS.background,
+        fontSize: 12,
+        fontWeight: '700',
+        lineHeight: 16,
     },
     backButton: {
         marginTop: 10,

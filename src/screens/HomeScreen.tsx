@@ -17,6 +17,7 @@ import { RootStackParamList } from '../types/navigation'
 import { LayoutType } from '../types/dto'
 import { COLORS } from '../constants/theme'
 import { useAuthStore } from '../store/useAuthStore'
+import { isMockAuthEnabled } from '../utils/dev'
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
 
@@ -261,6 +262,15 @@ export const HomeScreen = () => {
                         onPress={() => navigation.navigate('History')}>
                         <Ionicons name="journal-outline" size={26} color={COLORS.primary} />
                     </TouchableOpacity>
+
+                    {isMockAuthEnabled && (
+                        <TouchableOpacity
+                            style={[styles.devLabButton, { marginLeft: 10 }]}
+                            onPress={() => navigation.navigate('DesignPlayground')}>
+                            <Ionicons name="flask-outline" size={18} color={COLORS.background} />
+                            <Text style={styles.devLabText}>UI Lab</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 <View style={styles.headerRight}>
@@ -404,6 +414,7 @@ const styles = StyleSheet.create({
     },
     headerLeft: {
         flexDirection: 'row',
+        alignItems: 'center',
     },
     headerRight: {
         flexDirection: 'row',
@@ -412,6 +423,20 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 12,
         backgroundColor: COLORS.whiteLight,
+    },
+    devLabButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.primary,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+    },
+    devLabText: {
+        color: COLORS.background,
+        fontSize: 12,
+        fontWeight: '700',
+        marginLeft: 6,
     },
 
     scrollContent: {

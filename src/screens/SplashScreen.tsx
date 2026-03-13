@@ -7,6 +7,11 @@ import { getOrCreateDeviceId } from '../utils/device'
 import { TarotApi } from '../api/tarot.api'
 import { useAuthStore } from '../store/useAuthStore'
 import { COLORS } from '../constants/theme'
+import {
+    createMockToken,
+    createMockUser,
+    isMockAuthEnabled,
+} from '../utils/dev'
 
 type SplashScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>
 
@@ -31,6 +36,15 @@ export const SplashScreen = () => {
 
                 // 1. Получаем или генерируем ID устройства
                 const deviceId = await getOrCreateDeviceId()
+
+                if (isMockAuthEnabled) {
+                    setAuth(
+                        createMockToken('anonymous'),
+                        createMockUser('anonymous', deviceId),
+                    )
+                    navigation.replace('Home')
+                    return
+                }
 
                 // 2. Стучимся на наш NestJS бэкенд для авторизации
                 const response = await TarotApi.initAnonymous(deviceId)

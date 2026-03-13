@@ -21,4 +21,5 @@ export type RootStackParamList = {
         question?: string // <-- И сюда
     }
     Auth: undefined
+    DesignPlayground: undefined
 }
