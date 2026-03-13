@@ -16,6 +16,7 @@ export const COLORS = {
     whiteLight: 'rgba(255, 255, 255, 0.1)',
     whiteMedium: 'rgba(255, 255, 255, 0.3)',
     darkTextEnabled: '#0A1128', // Темный текст для активных элементов управления
+    primaryAccent: 'rgba(112, 193, 255, 1)',
 };
 
 export const SIZES = {
