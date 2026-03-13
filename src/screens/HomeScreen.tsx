@@ -10,6 +10,7 @@ import {
     ScrollView,
     Modal,
     Pressable,
+    Image,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
@@ -38,7 +39,7 @@ interface StarConfig {
     maxOpacity: number
 }
 
-const STAR_COUNT = 18
+const STAR_COUNT = 148
 
 const generateStars = (): StarConfig[] =>
     Array.from({ length: STAR_COUNT }, (_, i) => ({
@@ -353,27 +354,33 @@ export const HomeScreen = () => {
                         styles.heroStage,
                         { opacity: fadeIn, transform: [{ translateY: slideUp }] },
                     ]}>
-                    <Animated.View
-                        style={[
-                            styles.moonGlow,
-                            { opacity: moonGlowOpacity, transform: [{ scale: moonScale }] },
-                        ]}
-                    />
-                    <Animated.View
-                        style={[
-                            styles.moonCore,
-                            { transform: [{ scale: moonScale }] },
-                        ]}>
-                        <View style={styles.orbHighlight} />
-                        <Ionicons name="moon" size={64} color={COLORS.glowCyan} />
-                    </Animated.View>
+                    <View style={styles.heroOrbScene}>
+                        <Animated.View
+                            style={[
+                                styles.moonGlow,
+                                { opacity: moonGlowOpacity, transform: [{ scale: moonScale }] },
+                            ]}
+                        />
+                        <Animated.View
+                            style={[
+                                styles.moonCore,
+                                { transform: [{ scale: moonScale }] },
+                            ]}>
+                            <View style={styles.orbHighlight} />
+                            <Image
+                                source={require('../../assets/splash-icon.png')}
+                                style={styles.moonImage}
+                                resizeMode="contain"
+                            />
+                        </Animated.View>
+                    </View>
 
                     <View style={styles.heroTextBlock}>
                         <Text style={styles.heroTitle}>Fortune AI</Text>
-                        <Text style={styles.heroSubtitle}>
+                        {/* <Text style={styles.heroSubtitle}>
                             Интерпретации карт создаются искусственным интеллектом
                             на основе выбранного расклада и твоего вопроса.
-                        </Text>
+                        </Text> */}
                         <Text style={styles.heroCaption}>
                             Выбирай расклад, пополняй энергию и сохраняй историю в аккаунте.
                         </Text>
@@ -658,13 +665,19 @@ const styles = StyleSheet.create({
         paddingTop: 24,
         paddingBottom: 18,
     },
+    heroOrbScene: {
+        width: 240,
+        height: 240,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 28,
+    },
     moonGlow: {
         position: 'absolute',
-        top: 30,
         width: 240,
         height: 240,
         borderRadius: 120,
-        backgroundColor: COLORS.primary,
+        backgroundColor: COLORS.primaryMedium,
         shadowColor: COLORS.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
@@ -672,23 +685,27 @@ const styles = StyleSheet.create({
         elevation: 0,
     },
     moonCore: {
-        width: 144,
-        height: 144,
-        borderRadius: 72,
+        width: 220,
+        height: 220,
+        borderRadius: 110,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: COLORS.primaryMedium,
+        backgroundColor: COLORS.primaryLight,
         borderWidth: 1.5,
         borderColor: COLORS.primary,
-        marginBottom: 28,
+        position: 'absolute',
+    },
+    moonImage: {
+        width: 240,
+        height: 240,
     },
     orbHighlight: {
         position: 'absolute',
-        top: 22,
-        left: 26,
-        width: 44,
-        height: 26,
-        borderRadius: 20,
+        top: 30,
+        left: 34,
+        width: 64,
+        height: 34,
+        borderRadius: 24,
         backgroundColor: 'rgba(255, 255, 255, 0.18)',
         transform: [{ rotate: '-15deg' }],
     },
