@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { secureStorage } from '../utils/secureStorage'
+import { supabase } from '../utils/supabase'
 
 // Типизируем нашего пользователя (соответствует тому, что отдает бэкенд)
 export interface User {
@@ -32,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
 
             logout: () => {
                 // Полный сброс. Новый deviceId будет создан при следующем запуске (SplashScreen)
+                supabase.auth.signOut();
                 set({ token: null, user: null })
             },
 

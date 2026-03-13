@@ -16,8 +16,9 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
     config => {
         const token = useAuthStore.getState().token
-        if (token && config.headers) {
-            config.headers.Authorization = `Bearer ${token}`
+        // Если токен есть в сторе, добавляем его, ТОЛЬКО ЕСЛИ его еще не передали явно
+        if (token && config.headers && !config.headers.Authorization) {
+            config.headers.set('Authorization', `Bearer ${token}`)
         }
         return config
     },
@@ -31,7 +32,14 @@ apiClient.interceptors.response.use(
         const originalRequest = error.config
 
         // Если бэкенд ответил 401 (Unauthorized) и мы еще не пробовали повторить запрос
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Игнорируем запросы на /auth/sync, чтобы избежать бесконечного цикла, когда
+        // токен от Google считается невалидным, и интерцептор "спасает" ситуацию, регестрируя нового анонима,
+        // что в итоге приводит к синхронизации (Аноним -> Аноним).
+        if (
+            error.response?.status === 401 && 
+            !originalRequest._retry &&
+            !originalRequest.url?.includes('/auth/sync')
+        ) {
             originalRequest._retry = true // Ставим флаг, чтобы не зациклиться
 
             const { user, setAuth, logout } = useAuthStore.getState()
@@ -52,7 +60,7 @@ apiClient.interceptors.response.use(
                     setAuth(accessToken, updatedUser)
 
                     // Повторяем оригинальный упавший запрос с новым заголовком
-                    originalRequest.headers.Authorization = `Bearer ${accessToken}`
+                    originalRequest.headers.set('Authorization', `Bearer ${accessToken}`)
                     return axios(originalRequest)
                 } catch (refreshError) {
                     console.error('Не удалось обновить токен. Разлогиниваем.', refreshError)

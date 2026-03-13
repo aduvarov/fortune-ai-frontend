@@ -266,9 +266,9 @@ export const HomeScreen = () => {
                 <View style={styles.headerRight}>
                     <TouchableOpacity
                         style={[styles.iconButton, { marginRight: 10 }]}
-                        onPress={() => user?.authProvider !== 'anonymous' ? navigation.navigate('Settings') : navigation.navigate('Auth')}>
+                        onPress={() => (user?.authProvider || user?.role) !== 'anonymous' ? navigation.navigate('Settings') : navigation.navigate('Auth')}>
                         <Ionicons 
-                            name={user?.authProvider !== 'anonymous' ? "person-circle-outline" : "log-in-outline"} 
+                            name={(user?.authProvider || user?.role) !== 'anonymous' ? "person-circle-outline" : "log-in-outline"} 
                             size={26} 
                             color={COLORS.primary} 
                         />
