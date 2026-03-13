@@ -9,12 +9,16 @@ export const useSettingsStore = create<ISettingsState>()(
         (set) => ({
             hapticsEnabled: true,
             defaultDrawSource: 'app' as DrawSource,
+            aiConsentAccepted: false,
 
             toggleHaptics: () =>
                 set((state) => ({ hapticsEnabled: !state.hapticsEnabled })),
 
             setDefaultDrawSource: (source: DrawSource) =>
                 set({ defaultDrawSource: source }),
+
+            setAiConsentAccepted: (accepted: boolean) =>
+                set({ aiConsentAccepted: accepted }),
         }),
         {
             name: 'tarot-settings-secure',
