@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
+    Alert,
     ScrollView,
     StyleSheet,
     Text,
@@ -14,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from '../types/navigation'
 import { DrawSource, LayoutType } from '../types/dto'
 import { COLORS } from '../constants/theme'
+import { useAuthStore } from '../store/useAuthStore'
 import { useSettingsStore } from '../store/useSettingsStore'
 
 type SetupScreenNavigationProp = NativeStackNavigationProp<
@@ -111,6 +113,7 @@ export const SetupReadingScreen = () => {
     const navigation = useNavigation<SetupScreenNavigationProp>()
     const route = useRoute<SetupScreenRouteProp>()
     const { defaultDrawSource } = useSettingsStore()
+    const energyBalance = useAuthStore(state => state.energyBalance)
 
     // Ref'ы для программной прокрутки между смысловыми секциями экрана.
     const scrollViewRef = useRef<ScrollView>(null)
@@ -142,9 +145,32 @@ export const SetupReadingScreen = () => {
     const selectedEnergyCost = selectedLayoutData
         ? selectedLayoutData.cardsCount * 10
         : null
+    const missingEnergy =
+        selectedEnergyCost !== null
+            ? Math.max(selectedEnergyCost - (energyBalance ?? 0), 0)
+            : null
+    const hasEnoughEnergy =
+        selectedEnergyCost !== null ? (energyBalance ?? 0) >= selectedEnergyCost : false
 
     const handleContinue = () => {
         if (!selectedLayout || !selectedSource) return
+
+        if (!hasEnoughEnergy) {
+            Alert.alert(
+                'Недостаточно энергии',
+                selectedEnergyCost !== null
+                    ? `Для этого расклада нужно ${selectedEnergyCost} энергии. Сейчас у тебя ${energyBalance ?? 0}.`
+                    : 'Сначала пополни энергию, чтобы начать расклад.',
+                [
+                    { text: 'Позже', style: 'cancel' },
+                    {
+                        text: 'Пополнить',
+                        onPress: () => navigation.navigate('Energy'),
+                    },
+                ],
+            )
+            return
+        }
 
         const finalQuestion =
             selectedLayout === 'daily' ? undefined : question.trim() || undefined
@@ -595,6 +621,25 @@ export const SetupReadingScreen = () => {
                             </Text>
                         </View>
                     ) : null}
+                    {selectedEnergyCost !== null ? (
+                        <View style={styles.summaryEnergyRow}>
+                            <Ionicons
+                                name="battery-half-outline"
+                                size={14}
+                                color={missingEnergy === 0 ? COLORS.primary : COLORS.accentGold}
+                            />
+                            <Text
+                                style={[
+                                    styles.summaryEnergyText,
+                                    missingEnergy !== 0 && styles.summaryEnergyWarning,
+                                ]}>
+                                Баланс: {energyBalance ?? 0}
+                                {missingEnergy !== 0
+                                    ? ` · Нужно ещё ${missingEnergy}`
+                                    : ' · Энергии достаточно'}
+                            </Text>
+                        </View>
+                    ) : null}
                     {selectedLayoutData ? (
                         <Text style={styles.summaryLongText}>
                             {selectedLayoutData.fullDesc}
@@ -614,6 +659,9 @@ export const SetupReadingScreen = () => {
                     style={[
                         styles.continueButton,
                         !isContinueEnabled && styles.continueButtonDisabled,
+                        isContinueEnabled &&
+                            !hasEnoughEnergy &&
+                            styles.continueButtonWarning,
                     ]}
                     onPress={handleContinue}
                     disabled={!isContinueEnabled}
@@ -625,9 +673,11 @@ export const SetupReadingScreen = () => {
                                 !isContinueEnabled &&
                                     styles.continueButtonTitleDisabled,
                             ]}>
-                            {selectedSource === 'physical'
-                                ? 'Перейти к выбору карт'
-                                : 'Открыть стол'}
+                            {!hasEnoughEnergy
+                                ? 'Пополнить энергию'
+                                : selectedSource === 'physical'
+                                  ? 'Перейти к выбору карт'
+                                  : 'Открыть стол'}
                         </Text>
                         <Text
                             style={[
@@ -636,7 +686,9 @@ export const SetupReadingScreen = () => {
                                     styles.continueButtonSubtitleDisabled,
                             ]}>
                             {isContinueEnabled
-                                ? 'Ритуал собран. Можно начинать.'
+                                ? hasEnoughEnergy
+                                  ? 'Ритуал собран. Можно начинать.'
+                                  : `Не хватает ${missingEnergy ?? 0} энергии для старта`
                                 : 'Выбери расклад и способ вытягивания'}
                         </Text>
                     </View>
@@ -1178,6 +1230,9 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         marginLeft: 6,
     },
+    summaryEnergyWarning: {
+        color: COLORS.accentGold,
+    },
     summaryLongText: {
         color: COLORS.textSecondary,
         fontSize: 13,
@@ -1204,6 +1259,9 @@ const styles = StyleSheet.create({
     },
     continueButtonDisabled: {
         backgroundColor: COLORS.whiteLight,
+    },
+    continueButtonWarning: {
+        backgroundColor: COLORS.accentGold,
     },
     continueButtonRight: {
         flexDirection: 'row',

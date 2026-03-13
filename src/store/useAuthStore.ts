@@ -16,8 +16,10 @@ export interface User {
 interface AuthState {
     token: string | null
     user: User | null
+    energyBalance: number | null
     isHydrated: boolean
     setAuth: (token: string, user: User) => void
+    setEnergyBalance: (balance: number | null) => void
     logout: () => void
     setHydrated: (state: boolean) => void
 }
@@ -27,14 +29,17 @@ export const useAuthStore = create<AuthState>()(
         set => ({
             token: null,
             user: null,
+            energyBalance: null,
             isHydrated: false, // Флаг окончания загрузки стора из памяти
 
             setAuth: (token, user) => set({ token, user }),
 
+            setEnergyBalance: balance => set({ energyBalance: balance }),
+
             logout: () => {
                 // Полный сброс. Новый deviceId будет создан при следующем запуске (SplashScreen)
                 supabase.auth.signOut();
-                set({ token: null, user: null })
+                set({ token: null, user: null, energyBalance: null })
             },
 
             setHydrated: state => set({ isHydrated: state }),

@@ -10,6 +10,7 @@ import { ResultScreen } from '../screens/ResultScreen'
 import { VirtualTableScreen } from '../screens/VirtualTableScreen'
 import { HistoryScreen } from '../screens/HistoryScreen'
 import { SettingsScreen } from '../screens/SettingsScreen'
+import { EnergyScreen } from '../screens/EnergyScreen'
 import { DesignPlaygroundScreen } from '../screens/DesignPlaygroundScreen'
 import { COLORS } from '../constants/theme'
 
@@ -29,6 +30,7 @@ export const AppNavigator = () => {
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="History" component={HistoryScreen} />
                 <Stack.Screen name="Settings" component={SettingsScreen} />
+                <Stack.Screen name="Energy" component={EnergyScreen} />
                 <Stack.Screen name="SetupReading" component={SetupReadingScreen} />
                 <Stack.Screen name="VirtualTable" component={VirtualTableScreen} />
                 <Stack.Screen name="PhysicalInput" component={PhysicalInputScreen} />

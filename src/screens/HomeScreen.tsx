@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react'
+import React, { useCallback, useEffect, useRef, useMemo } from 'react'
 import {
     View,
     Text,
@@ -10,13 +10,14 @@ import {
     ScrollView,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from '../types/navigation'
 import { LayoutType } from '../types/dto'
 import { COLORS } from '../constants/theme'
 import { useAuthStore } from '../store/useAuthStore'
+import { EnergyApi } from '../api/energy.api'
 import { isMockAuthEnabled } from '../utils/dev'
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>
@@ -126,7 +127,9 @@ const QUICK_CARDS: QuickCardConfig[] = [
 
 export const HomeScreen = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
-    const { user } = useAuthStore()
+    const user = useAuthStore(state => state.user)
+    const energyBalance = useAuthStore(state => state.energyBalance)
+    const setEnergyBalance = useAuthStore(state => state.setEnergyBalance)
 
     const stars = useMemo(() => generateStars(), [])
 
@@ -245,6 +248,25 @@ export const HomeScreen = () => {
     const btnGlowOpacity = btnGlow.interpolate({ inputRange: [0, 1], outputRange: [0.3, 0.8] })
     const btnGlowScale = btnGlow.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1.05] })
 
+    const refreshBalance = useCallback(async () => {
+        if (isMockAuthEnabled) {
+            return
+        }
+
+        try {
+            const { balance } = await EnergyApi.getBalance()
+            setEnergyBalance(balance)
+        } catch (error) {
+            console.error('Не удалось обновить баланс энергии', error)
+        }
+    }, [setEnergyBalance])
+
+    useFocusEffect(
+        useCallback(() => {
+            void refreshBalance()
+        }, [refreshBalance]),
+    )
+
     return (
         <SafeAreaView style={styles.container}>
             {/* Фоновые звёзды */}
@@ -274,6 +296,13 @@ export const HomeScreen = () => {
                 </View>
 
                 <View style={styles.headerRight}>
+                    <TouchableOpacity
+                        style={styles.energyPill}
+                        onPress={() => navigation.navigate('Energy')}>
+                        <Ionicons name="flash" size={16} color={COLORS.primary} />
+                        <Text style={styles.energyPillText}>{energyBalance ?? 0}</Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity
                         style={[styles.iconButton, { marginRight: 10 }]}
                         onPress={() => (user?.authProvider || user?.role) !== 'anonymous' ? navigation.navigate('Settings') : navigation.navigate('Auth')}>
@@ -418,11 +447,29 @@ const styles = StyleSheet.create({
     },
     headerRight: {
         flexDirection: 'row',
+        alignItems: 'center',
     },
     iconButton: {
         padding: 10,
         borderRadius: 12,
         backgroundColor: COLORS.whiteLight,
+    },
+    energyPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        marginRight: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        borderRadius: 12,
+        backgroundColor: COLORS.whiteLight,
+        borderWidth: 1,
+        borderColor: COLORS.primaryBorder,
+    },
+    energyPillText: {
+        color: COLORS.primary,
+        fontSize: 14,
+        fontWeight: '700',
     },
     devLabButton: {
         flexDirection: 'row',

@@ -20,9 +20,11 @@ import { COLORS } from '../constants/theme';
 import { supabase } from '../utils/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { authApi } from '../api/auth.api';
+import { EnergyApi } from '../api/energy.api';
 import {
     createMockToken,
     createMockUser,
+    getMockEnergyBalance,
     isMockAuthEnabled,
 } from '../utils/dev';
 
@@ -31,7 +33,7 @@ type AuthScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'A
 
 const AuthScreen = () => {
     const navigation = useNavigation<AuthScreenNavigationProp>();
-    const { setAuth } = useAuthStore();
+    const { setAuth, setEnergyBalance } = useAuthStore();
 
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
@@ -70,6 +72,7 @@ const AuthScreen = () => {
                     createMockToken('email'),
                     createMockUser('email', deviceId, email),
                 );
+                setEnergyBalance(getMockEnergyBalance('email'));
                 navigation.replace('Home');
                 return;
             }
@@ -95,6 +98,9 @@ const AuthScreen = () => {
                     await handleSync(anonymousToken);
                 }
 
+                const energy = await EnergyApi.getBalance();
+                setEnergyBalance(energy.balance);
+
                 navigation.replace('Home');
             } else if (!isLogin) {
                 Alert.alert('Успех', 'Пожалуйста, проверьте свою почту для подтверждения (если требуется).');
@@ -118,6 +124,7 @@ const AuthScreen = () => {
                     createMockToken('google'),
                     createMockUser('google', deviceId, 'design@google.dev'),
                 );
+                setEnergyBalance(getMockEnergyBalance('google'));
                 navigation.replace('Home');
                 return;
             }
@@ -152,6 +159,9 @@ const AuthScreen = () => {
                     if (anonymousToken) {
                         await handleSync(anonymousToken);
                     }
+
+                    const energy = await EnergyApi.getBalance();
+                    setEnergyBalance(energy.balance);
 
                     navigation.replace('Home');
                 }

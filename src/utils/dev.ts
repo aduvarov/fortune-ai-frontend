@@ -16,3 +16,15 @@ export const createMockUser = (
 })
 
 export const createMockToken = (provider: string) => `mock-token-${provider}`
+
+export const getMockEnergyBalance = (provider: User['authProvider']): number => {
+    switch (provider) {
+        case 'anonymous':
+            return 10
+        case 'email':
+        case 'google':
+            return 60
+        default:
+            return 10
+    }
+}

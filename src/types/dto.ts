@@ -19,6 +19,5 @@ export interface InterpretReadingDto {
     question: string
     layoutType: LayoutType
     drawSource: DrawSource
-    isAd?: boolean
     cards: CardInputDto[]
 }
