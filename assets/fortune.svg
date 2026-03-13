@@ -1,0 +1,173 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Background Gradient -->
+        <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#1a0033" />
+            <stop offset="100%" stop-color="#050011" />
+        </radialGradient>
+
+        <!-- Neon Gradients -->
+        <linearGradient id="sunGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FF007F" />
+            <stop offset="100%" stop-color="#FFD700" />
+        </linearGradient>
+        
+        <linearGradient id="moonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00FFFF" />
+            <stop offset="100%" stop-color="#8A2BE2" />
+        </linearGradient>
+
+        <!-- Universal Neon Glow Filter -->
+        <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur1" />
+            <feGaussianBlur stdDeviation="12" result="blur2" />
+            <feMerge>
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+
+        <!-- Large Aura Blur -->
+        <filter id="aura-blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="40" />
+        </filter>
+
+        <!-- Reusable Sun Rays -->
+        <g id="s-ray">
+            <line x1="256" y1="135" x2="256" y2="50" stroke="url(#sunGrad)" stroke-width="8" stroke-linecap="round" filter="url(#neon-glow)"/>
+            <line x1="256" y1="135" x2="256" y2="50" stroke="#FFF5E6" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <g id="w-ray">
+            <path d="M 256 135 Q 275 105 256 75 Q 237 45 256 15" fill="none" stroke="url(#sunGrad)" stroke-width="6" stroke-linecap="round" filter="url(#neon-glow)"/>
+            <path d="M 256 135 Q 275 105 256 75 Q 237 45 256 15" fill="none" stroke="#FFF5E6" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+
+        <!-- Reusable Sparkle Star -->
+        <g id="sparkle">
+            <path d="M 0 -12 Q 0 0 12 0 Q 0 0 0 12 Q 0 0 -12 0 Q 0 0 0 -12 Z" fill="#00FFFF" filter="url(#neon-glow)"/>
+            <path d="M 0 -12 Q 0 0 12 0 Q 0 0 0 12 Q 0 0 -12 0 Q 0 0 0 -12 Z" fill="#FFFFFF" />
+        </g>
+        <g id="sparkle-pink">
+            <path d="M 0 -10 Q 0 0 10 0 Q 0 0 0 10 Q 0 0 -10 0 Q 0 0 0 -10 Z" fill="#FF007F" filter="url(#neon-glow)"/>
+            <path d="M 0 -10 Q 0 0 10 0 Q 0 0 0 10 Q 0 0 -10 0 Q 0 0 0 -10 Z" fill="#FFFFFF" />
+        </g>
+    </defs>
+
+    <!-- Background -->
+    <rect width="512" height="512" fill="url(#bgGrad)"/>
+
+    <!-- Background Auras -->
+    <circle cx="300" cy="256" r="120" fill="#FF007F" filter="url(#aura-blur)" opacity="0.25"/>
+    <circle cx="212" cy="256" r="120" fill="#00FFFF" filter="url(#aura-blur)" opacity="0.25"/>
+
+    <!-- Esoteric Outer Rings -->
+    <circle cx="256" cy="256" r="240" fill="none" stroke="#8A2BE2" stroke-width="2" filter="url(#neon-glow)" opacity="0.4"/>
+    <circle cx="256" cy="256" r="225" fill="none" stroke="#FF007F" stroke-width="1.5" stroke-dasharray="4 12" filter="url(#neon-glow)" opacity="0.7"/>
+    <circle cx="256" cy="256" r="215" fill="none" stroke="#00FFFF" stroke-width="1" opacity="0.5"/>
+
+    <!-- Constellations / Magic Dust -->
+    <g stroke="#00FFFF" stroke-width="1" opacity="0.6" filter="url(#neon-glow)">
+        <line x1="70" y1="120" x2="100" y2="80" />
+        <line x1="100" y1="80" x2="140" y2="90" />
+        <circle cx="70" cy="120" r="2" fill="#FFF"/>
+        <circle cx="100" cy="80" r="3" fill="#FFF"/>
+        <circle cx="140" cy="90" r="2" fill="#FFF"/>
+        
+        <line x1="430" y1="390" x2="460" y2="350" />
+        <line x1="460" y1="350" x2="440" y2="310" />
+        <circle cx="430" cy="390" r="2" fill="#FFF"/>
+        <circle cx="460" cy="350" r="3" fill="#FFF"/>
+        <circle cx="440" cy="310" r="2" fill="#FFF"/>
+    </g>
+
+    <!-- Sun Rays -->
+    <g id="all-rays">
+        <use href="#s-ray" />
+        <use href="#s-ray" transform="rotate(45 256 256)" />
+        <use href="#s-ray" transform="rotate(90 256 256)" />
+        <use href="#s-ray" transform="rotate(135 256 256)" />
+        <use href="#s-ray" transform="rotate(180 256 256)" />
+        <use href="#s-ray" transform="rotate(225 256 256)" />
+        <use href="#s-ray" transform="rotate(270 256 256)" />
+        <use href="#s-ray" transform="rotate(315 256 256)" />
+
+        <use href="#w-ray" transform="rotate(22.5 256 256)" />
+        <use href="#w-ray" transform="rotate(67.5 256 256)" />
+        <use href="#w-ray" transform="rotate(112.5 256 256)" />
+        <use href="#w-ray" transform="rotate(157.5 256 256)" />
+        <use href="#w-ray" transform="rotate(202.5 256 256)" />
+        <use href="#w-ray" transform="rotate(247.5 256 256)" />
+        <use href="#w-ray" transform="rotate(292.5 256 256)" />
+        <use href="#w-ray" transform="rotate(337.5 256 256)" />
+    </g>
+
+    <!-- Sun Body -->
+    <circle cx="256" cy="256" r="110" fill="#050011" />
+    <circle cx="256" cy="256" r="110" fill="none" stroke="url(#sunGrad)" stroke-width="8" filter="url(#neon-glow)"/>
+    <circle cx="256" cy="256" r="110" fill="none" stroke="#FFF5E6" stroke-width="2"/>
+    
+    <!-- Sun Inner Decorative Ring -->
+    <circle cx="256" cy="256" r="95" fill="none" stroke="#FF007F" stroke-width="2" stroke-dasharray="6 6" filter="url(#neon-glow)"/>
+
+    <!-- Sun Hexagram (Merkaba) -->
+    <g stroke="#FFD700" stroke-width="1.5" opacity="0.6" fill="none" filter="url(#neon-glow)">
+        <polygon points="256,176 325.3,296 186.7,296" />
+        <polygon points="256,336 186.7,216 325.3,216" />
+    </g>
+    <g fill="#FFD700" filter="url(#neon-glow)">
+        <circle cx="256" cy="176" r="3" />
+        <circle cx="325.3" cy="296" r="3" />
+        <circle cx="186.7" cy="296" r="3" />
+        <circle cx="256" cy="336" r="3" />
+        <circle cx="325.3" cy="216" r="3" />
+        <circle cx="186.7" cy="216" r="3" />
+    </g>
+
+    <!-- Moon Body (Rotated to cup the sun) -->
+    <g transform="rotate(-30 256 256)">
+        <!-- Moon Base (Blocks sun rays behind it) -->
+        <path d="M 256 70 A 186 186 0 0 0 256 442 A 500 500 0 0 1 256 70 Z" fill="#050011" />
+        
+        <!-- Moon Neon Glow -->
+        <path d="M 256 70 A 186 186 0 0 0 256 442 A 500 500 0 0 1 256 70 Z" fill="none" stroke="url(#moonGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon-glow)"/>
+        
+        <!-- Moon Core & Inner Tint -->
+        <path d="M 256 70 A 186 186 0 0 0 256 442 A 500 500 0 0 1 256 70 Z" fill="url(#moonGrad)" fill-opacity="0.15" stroke="#E6FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Mystical Eye (Center) -->
+    <g id="mystic-eye">
+        <!-- Outer Eye Glow -->
+        <path d="M 206 256 Q 256 216 306 256 Q 256 296 206 256 Z" fill="#050011" stroke="#00FFFF" stroke-width="6" filter="url(#neon-glow)"/>
+        <!-- Outer Eye Core -->
+        <path d="M 206 256 Q 256 216 306 256 Q 256 296 206 256 Z" fill="none" stroke="#E6FFFF" stroke-width="2"/>
+        
+        <!-- Iris Glow -->
+        <circle cx="256" cy="256" r="18" fill="none" stroke="#FF007F" stroke-width="4" filter="url(#neon-glow)"/>
+        <!-- Iris Core -->
+        <circle cx="256" cy="256" r="18" fill="url(#moonGrad)" stroke="#FFF0F5" stroke-width="1"/>
+        
+        <!-- Pupil & Sparkle -->
+        <circle cx="256" cy="256" r="8" fill="#050011" />
+        <circle cx="261" cy="251" r="3" fill="#FFFFFF" filter="url(#neon-glow)"/>
+    </g>
+
+    <!-- Hanging Gem from Moon Tip -->
+    <g id="hanging-gem">
+        <line x1="349" y1="417" x2="349" y2="447" stroke="#00FFFF" stroke-width="2" stroke-dasharray="2 3" filter="url(#neon-glow)"/>
+        <polygon points="349,447 355,457 349,467 343,457" fill="#FF007F" filter="url(#neon-glow)"/>
+        <polygon points="349,447 353,457 349,465 345,457" fill="#FFFFFF" />
+    </g>
+
+    <!-- Additional Esoteric Accents -->
+    <circle cx="110" cy="390" r="12" fill="none" stroke="#FFD700" stroke-width="3" filter="url(#neon-glow)"/>
+    <circle cx="110" cy="390" r="12" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+    <circle cx="104" cy="384" r="2" fill="#FFFFFF"/>
+
+    <!-- Sparkles -->
+    <use href="#sparkle" x="130" y="130" />
+    <use href="#sparkle-pink" x="390" y="140" />
+    <use href="#sparkle" x="380" y="380" />
+    <use href="#sparkle-pink" x="163" y="95" />
+</svg>
